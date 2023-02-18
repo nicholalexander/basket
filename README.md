@@ -1,3 +1,4 @@
+# It would be silly to use this gem because it doesn't work yet.
 # Basket
 
 A farmer doesn't walk down to the chicken coop, grab an egg, go back to the kitchen, go back to the coop, go back to the kitchen, etc, etc.  They take a basket with them, and as the chickens lay their eggs, they fill up the basket and when the basket is full they go make something with them!  I would make a quiche, but that's besides the case.
