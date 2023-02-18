@@ -37,12 +37,8 @@ class QuicheBasket
   basket_options length: 15
 
   def perform
-    eggs = []
     batch.each do | egg |
       # do some processing on each element of the batch.  In this case there will be 15 eggs.
-      egg = Egg.new(egg)
-      egg.wash!
-      eggs << egg
     end
 
     # If you want to do something directly inline:
@@ -57,11 +53,10 @@ class QuicheBasket
   # :on_success, :on_failure, :on_add, :check_length
   # They can be used like this:
   on_success: :let_chickens_rest
-
+  on_add: :wash_egg
   def let_chickens_rest
     ... 
   end
-
 end
 ```
 
