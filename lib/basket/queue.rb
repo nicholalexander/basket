@@ -1,4 +1,4 @@
-module Batched
+module Basket
   class Queue
     def initialize(backend = HashBackend.new)
       @backend = backend

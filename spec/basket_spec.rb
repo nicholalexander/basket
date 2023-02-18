@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe Batched do
+RSpec.describe Basket do
   it "has a version number" do
-    expect(Batched::VERSION).not_to be nil
+    expect(Basket::VERSION).not_to be nil
   end
 
   it "will do something useful in the future" do

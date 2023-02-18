@@ -1,8 +1,8 @@
-# Batched
+# Basket
 
 TODO: Delete this and the text below, and describe your gem
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/batched`. To experiment with that code, run `bin/console` for an interactive prompt.
+Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/basket`. To experiment with that code, run `bin/console` for an interactive prompt.
 
 ## Installation
 
@@ -22,7 +22,7 @@ You have something you need to do, like make an API call.  Don't call the API, a
 
 ```ruby
 body = { data: "bloop" }
-Batched.add('SomeApi', body)
+Basket.add('SomeApi', body)
 ```
 
 
@@ -33,9 +33,9 @@ Then `rails g batch`
 
 ```ruby
 class SomeApi
-  include Batched::Batcher
+  include Basket::Batcher
   
-  batched_options length: 15
+  basket_options length: 15
 
   def perform
     batch.each do | element |
@@ -74,7 +74,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/batched. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/batched/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/basket. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/basket/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
@@ -82,7 +82,7 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Batched project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/batched/blob/main/CODE_OF_CONDUCT.md).
+Everyone interacting in the Basket project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/basket/blob/main/CODE_OF_CONDUCT.md).
 
 
 
@@ -95,7 +95,7 @@ Everyone interacting in the Batched project's codebases, issue trackers, chat ro
 4. Use ActiveJob for background execution.
 5. "Buffer", "collection", "queue"
 6. Default trigger is just queue length.
-7. Expose batched_options trigger: :check_some_thing_lambda
+7. Expose basket_options trigger: :check_some_thing_lambda
 8. Redis push pop.
 9. Make queue ephemeral?
 10. Define gotchas but don't solve them.

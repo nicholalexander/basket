@@ -1,4 +1,4 @@
-module Batched
+module Basket
   class HashBackend
     attr_reader :data
 

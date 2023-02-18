@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in batched.gemspec
+# Specify your gem's dependencies in basket.gemspec
 gemspec
 
 gem "rake", "~> 13.0"

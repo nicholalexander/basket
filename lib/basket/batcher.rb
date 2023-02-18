@@ -1,4 +1,4 @@
-module Batched
+module Basket
   module Batcher
   end
 end
