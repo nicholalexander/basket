@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require_relative "batched/batcher"
+require_relative "batched/hash_backend"
+require_relative "batched/queue"
 require_relative "batched/version"
-
 module Batched
   class Error < StandardError; end
 
