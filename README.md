@@ -22,7 +22,7 @@ You have something you need to do, like make an API call.  Don't call the API, a
 
 ```ruby
 body = { data: "bloop" }
-Batched.add('some_api', body)
+Batched.add('SomeApi', body)
 ```
 
 
