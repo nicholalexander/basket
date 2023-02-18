@@ -22,5 +22,3 @@ module Batched
     end
   end
 end
-
-

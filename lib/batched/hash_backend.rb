@@ -13,6 +13,7 @@ module Batched
 
     def length(queue)
       return 0 if @data[queue].nil?
+
       @data[queue].length
     end
 
