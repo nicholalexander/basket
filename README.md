@@ -1,8 +1,8 @@
 # Basket
 
-TODO: Delete this and the text below, and describe your gem
+A farmer doesn't walk down to the chicken coop, grab an egg, go back to the kitchen, go back to the coop, go back to the kitchen, etc, etc.  They take a basket with them, and as the chickens lay their eggs, they fill up the basket and when the basket is full they go make something with them!  I would make a quiche, but that's besides the case.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/basket`. To experiment with that code, run `bin/console` for an interactive prompt.
+`Basket` lets you do just that.  Collect items until your basket is full and then, when it is, go do something with them!
 
 ## Installation
 
@@ -18,54 +18,54 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
-You have something you need to do, like make an API call.  Don't call the API, add it to a batch!
+Add items to your basket as they come along.  They might come along quickly, or there might be a delay between them.  Regardless, you want to collect items into your basket before going and doing something with them.
 
 ```ruby
-body = { data: "bloop" }
-Basket.add('SomeApi', body)
+while chicken.laying do 
+  egg = { egg: {color: brown, size: medium}}
+  Basket.add('QuicheBasket', egg)
+end
 ```
 
-
-
-The body can be any data you want, not nessecarily a json blob that the external API is expecting.
-
-Then `rails g batch`
+The item added to the basket can be any data you want!  If you are using the in memory Queue, it is fine to store Ruby objects, but if you have a different backend, it might be better to stick to easily serializable objects.
 
 ```ruby
-class SomeApi
+class QuicheBasket
   include Basket::Batcher
   
   basket_options length: 15
 
   def perform
-    batch.each do | element |
-        # do some processing on each element of the batch.  In this case there will be 15 objects with the key `data`.
+    eggs = []
+    batch.each do | egg |
+      # do some processing on each element of the batch.  In this case there will be 15 eggs.
+      egg = Egg.new(egg)
+      egg.wash!
+      eggs << egg
     end
 
-    # send the batch off to some API Client
-    CatClient.get(batch)
-    CatWorker.perform_async(blablabla)
+    # If you want to do something directly inline:
+    Quiche.make(eggs)
+
+    # If you want to do something out of a request response cycle,
+    # call out to your favorite background processing framework:
+    BrunchInviteJob.perform_async
   end
  
-  # callbacks
-  :on_success, :on_failure, :on_add, :check_length
+  # There are four callbacks to the lifecycle of a basket.
+  # :on_success, :on_failure, :on_add, :check_length
+  # They can be used like this:
+  on_success: :let_chickens_rest
 
-  on_success: :bloop
-
-  def bloop
-    Rails.logger("Yay!")
+  def let_chickens_rest
+    ... 
   end
+
 end
 ```
 
-The perform method will be called after there have been 15 elements added to the batch.  The callbacks are lifecycle callbacks on the existing of the batch.  `on_add` takes an argument of the element that is being added.  The elements are just a hash.  `on_success` and `on_failure` give access to the whole batch.
+The perform method will be called after there have been 15 elements added to the batch.  The callbacks are lifecycle callbacks on the existing batch.  `on_add` takes an argument of the element that is being added.  The elements are just a hash.  `on_success` and `on_failure` give access to the whole batch.
 
-```ruby
-Configuration do |config|
-  # config.element_retention: 500_000
-  config.queue: 'default'
-end
-```
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -90,16 +90,17 @@ Everyone interacting in the Basket project's codebases, issue trackers, chat roo
 
 1. Can the callbacks support ActiveSupport Notifications?
    - ActiveSupport::Callbacks extraction of callbacks
-2. Batch can be postgres json blob or Redis!
-3. Does not execute in line
-4. Use ActiveJob for background execution.
-5. "Buffer", "collection", "queue"
+2. Batch can be postgres json blob or Redis! - Backend system
+~~3. Does not execute in line~~For now.
+~~4. Use ActiveJob for background execution.~~ It's up to you to handle a full basket how you want.
+~~5. "Buffer", "collection", "queue"~~ Basket.
 6. Default trigger is just queue length.
 7. Expose basket_options trigger: :check_some_thing_lambda
 8. Redis push pop.
 9. Make queue ephemeral?
 10. Define gotchas but don't solve them.
 11. Redis fetch / Super Fetch?
+12. Configuration.
 
 https://api.rubyonrails.org/classes/ActiveSupport/Callbacks.html
 
