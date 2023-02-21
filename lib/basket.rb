@@ -8,11 +8,15 @@ require_relative "basket/version"
 module Basket
   class Error < StandardError; end
 
-  def self.add(queue, data)
-    queue_length = Basket::Queue.push(queue, data)
-    queue_class = queue.constantize.new
-    return unless queue_length == queue_class.batcher.options.queue_length
+  def self.config
+    @config ||= {queue: Basket::Queue.new}
+  end
 
-    queue_class.perform
+  def self.add(queue, data)
+    queue_length = @config[:queue].push(queue, data)
+    queue_class = Object.const_get(queue)
+    return unless queue_length == queue_class.basket_options_hash[:size]
+
+    queue_class.new.perform
   end
 end

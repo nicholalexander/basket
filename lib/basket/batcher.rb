@@ -10,7 +10,7 @@ module Basket
         ACCESSOR_MUTEX = Mutex.new
 
         def basket_options(opts = {})
-          opts = opts.transform_keys(&:to_s) # stringify
+          # opts = opts.transform_keys(&:to_s) # stringify
           self.basket_options_hash = get_basket_options.merge(opts)
         end
 
@@ -97,17 +97,9 @@ module Basket
     end
 
     module ClassMethods
-      def perform(*args)
-      end
-
       def basket_options(opts = {})
         super
       end
     end
   end
-end
-
-class Bloop
-  include Basket::Batcher
-  basket_options size: 15
 end
