@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
+class DummyGroceryBasket
+  include Basket::Batcher
+  basket_options size: 2
+
+  def perform
+    puts "Checkout"
+  end
+end
+
 RSpec.describe Basket do
   it "has a version number" do
     expect(Basket::VERSION).not_to be nil
@@ -11,20 +20,15 @@ RSpec.describe Basket do
 
   it "will perform an action when the basket is full" do
     Basket.config
-    class GroceryBasket
-      include Basket::Batcher
-      basket_options size: 2
 
-      def perform
-        puts "Checkout"
-      end
-    end
+    stubbed_basket = DummyGroceryBasket.new
+    allow(DummyGroceryBasket).to receive(:new).and_return(stubbed_basket)
+    allow(stubbed_basket).to receive(:perform).and_call_original
 
-    allow($stdout).to receive(:puts)
+    Basket.add("DummyGroceryBasket", :milk)
+    Basket.add("DummyGroceryBasket", :cookies)
 
-    Basket.add("GroceryBasket", :milk)
-    Basket.add("GroceryBasket", :cookies)
-
-    expect($stdout).to have_received(:puts).with("Checkout")
+    expect(DummyGroceryBasket.basket_options_hash).to eq({size: 2})
+    expect(stubbed_basket).to have_received(:perform)
   end
 end
