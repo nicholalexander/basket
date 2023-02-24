@@ -13,12 +13,20 @@ class DummyStockBasket
   include Basket::Batcher
   basket_options size: 3
 
-  def perform
-    sell(batch)
+  class StockTrader
+    def self.sell(stock)
+      puts stock
+    end
   end
 
-  def sell
-    puts ap batch
+  def perform
+    batch.each do |stock|
+      sell(stock)
+    end
+  end
+
+  def sell(stock)
+    StockTrader.sell(stock)
   end
 end
 
@@ -29,6 +37,10 @@ RSpec.describe Basket do
 
   it "will do something useful in the future" do
     expect(true).to eq(true)
+  end
+
+  before do
+    Basket.clear_all
   end
 
   describe "#add" do
@@ -57,7 +69,24 @@ RSpec.describe Basket do
       expect(stubbed_basket).to have_received(:perform)
     end
 
-    it "resets"
+    it "processes the batch" do
+      Basket.config
+
+      stubbed_basket = DummyStockBasket.new
+      allow(DummyStockBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:perform).and_call_original
+      expect(DummyStockBasket::StockTrader).to receive(:sell).with({ticker: :ibm, price: 1234}).ordered
+      expect(DummyStockBasket::StockTrader).to receive(:sell).with({ticker: :apl, price: 2345}).ordered
+      expect(DummyStockBasket::StockTrader).to receive(:sell).with({ticker: :asdf, price: 345}).ordered
+
+      Basket.add("DummyStockBasket", {ticker: :ibm, price: 1234})
+      Basket.add("DummyStockBasket", {ticker: :apl, price: 2345})
+      Basket.add("DummyStockBasket", {ticker: :asdf, price: 345})
+
+      expect(stubbed_basket).to have_received(:perform)
+      expect(Basket.config[:queue].length("DummyStockBasket")).to eq(0)
+    end
+
     it "will make the batch available to perform"
   end
 

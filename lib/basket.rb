@@ -23,4 +23,10 @@ module Basket
 
     queue_class.new.perform
   end
+
+  def self.clear_all
+    unless @config.nil?
+      @config[:queue] = Basket::Queue.new
+    end
+  end
 end
