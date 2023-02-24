@@ -12,6 +12,10 @@ module Basket
     @config ||= {queue: Basket::Queue.new}
   end
 
+  def self.contents
+    @config[:queue].data
+  end
+
   def self.add(queue, data)
     queue_length = @config[:queue].push(queue, data)
     queue_class = Object.const_get(queue)
