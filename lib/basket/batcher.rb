@@ -17,5 +17,8 @@ module Basket
     def batch
       @batch ||= Basket.config[:queue].pop_all(self.class.name)
     end
+
+    def on_success
+    end
   end
 end
