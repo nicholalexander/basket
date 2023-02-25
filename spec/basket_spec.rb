@@ -39,6 +39,18 @@ class DummyStockBasket
   end
 end
 
+class DummyFireworksBasket
+  include Basket::Batcher
+  basket_options size: 1
+
+  def perform
+    raise "Boom"
+  end
+
+  def on_success
+  end
+end
+
 RSpec.describe Basket do
   it "has a version number" do
     expect(Basket::VERSION).not_to be nil
@@ -107,7 +119,16 @@ RSpec.describe Basket do
       expect(DummyGroceryBasket::Bag).to have_received(:add)
     end
 
-    it "is not called if perform raises an error"
+    it "is not called if perform raises an error" do
+      stubbed_basket = DummyFireworksBasket.new
+      allow(DummyFireworksBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:perform).and_call_original
+      allow(stubbed_basket).to receive(:on_success).and_call_original
+
+      expect { Basket.add("DummyFireworksBasket", :bottle_rocket) }.to raise_error(/Boom/)
+      expect(stubbed_basket).to have_received(:perform)
+      expect(stubbed_basket).to_not have_received(:on_success)
+    end
 
     it "does nothing if the class does not define it" do
       stubbed_basket = DummyStockBasket.new
