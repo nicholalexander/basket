@@ -21,7 +21,9 @@ module Basket
     queue_class = Object.const_get(queue)
     return unless queue_length == queue_class.basket_options_hash[:size]
 
-    queue_class.new.perform
+    queue_instance = queue_class.new
+    queue_instance.perform
+    queue_instance.on_success
   end
 
   def self.clear_all
