@@ -46,9 +46,6 @@ class DummyFireworksBasket
   def perform
     raise "Boom"
   end
-
-  def on_success
-  end
 end
 
 RSpec.describe Basket do
