@@ -4,8 +4,17 @@ class DummyGroceryBasket
   include Basket::Batcher
   basket_options size: 2
 
+  class Bag
+    def self.add(groceries)
+    end
+  end
+
   def perform
     puts "Checkout"
+  end
+
+  def on_success
+    DummyGroceryBasket::Bag.add(batch)
   end
 end
 
@@ -81,13 +90,38 @@ RSpec.describe Basket do
       expect(stubbed_basket).to have_received(:perform)
       expect(Basket.config[:queue].length("DummyStockBasket")).to eq(0)
     end
-
-    it "will make the batch available to perform"
   end
 
   describe "#on_success" do
-    it "is called after perform"
+    it "is called after perform" do
+      stubbed_basket = DummyGroceryBasket.new
+      allow(DummyGroceryBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:perform).and_call_original
+      allow(stubbed_basket).to receive(:on_success).and_call_original
+      allow(DummyGroceryBasket::Bag).to receive(:add)
+
+      Basket.add("DummyGroceryBasket", :pene)
+      Basket.add("DummyGroceryBasket", :tomatos)
+
+      expect(stubbed_basket).to have_received(:on_success)
+      expect(DummyGroceryBasket::Bag).to have_received(:add)
+    end
+
     it "is not called if perform raises an error"
+
+    it "does nothing if the class does not define it" do
+      stubbed_basket = DummyStockBasket.new
+      allow(DummyStockBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:perform).and_call_original
+      allow(stubbed_basket).to receive(:on_success).and_call_original
+
+      Basket.add("DummyStockBasket", {ticker: :ibm, price: 1234})
+      Basket.add("DummyStockBasket", {ticker: :apl, price: 2345})
+      Basket.add("DummyStockBasket", {ticker: :asdf, price: 345})
+
+      expect(stubbed_basket).to have_received(:perform)
+      expect(stubbed_basket).to have_received(:on_success)
+    end
   end
 
   describe "#on_failure" do
