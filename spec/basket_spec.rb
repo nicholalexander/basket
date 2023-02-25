@@ -40,13 +40,12 @@ RSpec.describe Basket do
   end
 
   before do
+    Basket.config
     Basket.clear_all
   end
 
   describe "#add" do
     it "allows you to track multiple baskets" do
-      Basket.config
-
       Basket.add("DummyGroceryBasket", :milk)
       Basket.add("DummyStockBasket", {stock: "IBM", purchased_price: 13036})
 
@@ -56,8 +55,6 @@ RSpec.describe Basket do
 
   describe "#perform" do
     it "will perform an action when the basket is full" do
-      Basket.config
-
       stubbed_basket = DummyGroceryBasket.new
       allow(DummyGroceryBasket).to receive(:new).and_return(stubbed_basket)
       allow(stubbed_basket).to receive(:perform).and_call_original
@@ -70,8 +67,6 @@ RSpec.describe Basket do
     end
 
     it "processes the batch" do
-      Basket.config
-
       stubbed_basket = DummyStockBasket.new
       allow(DummyStockBasket).to receive(:new).and_return(stubbed_basket)
       allow(stubbed_basket).to receive(:perform).and_call_original
