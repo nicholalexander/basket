@@ -1,52 +1,8 @@
 # frozen_string_literal: true
 
-class DummyGroceryBasket
-  include Basket::Batcher
-  basket_options size: 2
-
-  class Bag
-    def self.add(groceries)
-    end
-  end
-
-  def perform
-    puts "Checkout"
-  end
-
-  def on_success
-    DummyGroceryBasket::Bag.add(batch)
-  end
-end
-
-class DummyStockBasket
-  include Basket::Batcher
-  basket_options size: 3
-
-  class StockTrader
-    def self.sell(stock)
-      puts stock
-    end
-  end
-
-  def perform
-    batch.each do |stock|
-      sell(stock)
-    end
-  end
-
-  def sell(stock)
-    StockTrader.sell(stock)
-  end
-end
-
-class DummyFireworksBasket
-  include Basket::Batcher
-  basket_options size: 1
-
-  def perform
-    raise "Boom"
-  end
-end
+require_relative "fixtures/groceries"
+require_relative "fixtures/stocks"
+require_relative "fixtures/fireworks"
 
 RSpec.describe Basket do
   it "has a version number" do
@@ -88,9 +44,9 @@ RSpec.describe Basket do
       stubbed_basket = DummyStockBasket.new
       allow(DummyStockBasket).to receive(:new).and_return(stubbed_basket)
       allow(stubbed_basket).to receive(:perform).and_call_original
-      expect(DummyStockBasket::StockTrader).to receive(:sell).with({ticker: :ibm, price: 1234}).ordered
-      expect(DummyStockBasket::StockTrader).to receive(:sell).with({ticker: :apl, price: 2345}).ordered
-      expect(DummyStockBasket::StockTrader).to receive(:sell).with({ticker: :asdf, price: 345}).ordered
+      expect(StockTrader).to receive(:sell).with({ticker: :ibm, price: 1234}).ordered
+      expect(StockTrader).to receive(:sell).with({ticker: :apl, price: 2345}).ordered
+      expect(StockTrader).to receive(:sell).with({ticker: :asdf, price: 345}).ordered
 
       Basket.add("DummyStockBasket", {ticker: :ibm, price: 1234})
       Basket.add("DummyStockBasket", {ticker: :apl, price: 2345})
@@ -107,13 +63,13 @@ RSpec.describe Basket do
       allow(DummyGroceryBasket).to receive(:new).and_return(stubbed_basket)
       allow(stubbed_basket).to receive(:perform).and_call_original
       allow(stubbed_basket).to receive(:on_success).and_call_original
-      allow(DummyGroceryBasket::Bag).to receive(:add)
+      allow(Bag).to receive(:add)
 
       Basket.add("DummyGroceryBasket", :pene)
       Basket.add("DummyGroceryBasket", :tomatos)
 
       expect(stubbed_basket).to have_received(:on_success)
-      expect(DummyGroceryBasket::Bag).to have_received(:add)
+      expect(Bag).to have_received(:add)
     end
 
     it "is not called if perform raises an error" do
