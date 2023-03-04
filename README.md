@@ -50,15 +50,20 @@ class QuicheBasket
   # There are four callbacks to the lifecycle of a basket.
   # :on_success, :on_failure, :on_add, :check_length
   # They can be used like this:
-  on_success: :let_chickens_rest
-  on_add: :wash_egg
-  def let_chickens_rest
-    ... 
+  def on_success
+    let_chickens_rest
+    batch.each do |egg|
+      egg.inspect
+    end
+  end
+
+  def on_add
+    element.wash
   end
 end
 ```
 
-The perform method will be called after there have been 15 elements added to the batch.  The callbacks are lifecycle callbacks on the existing batch.  `on_add` takes an argument of the element that is being added.  The elements are just a hash.  `on_success` and `on_failure` give access to the whole batch.
+The perform method will be called after there have been 15 elements added to the batch.  The callbacks are lifecycle callbacks on the existing batch.  `on_add` gives access to a variable called `element` which is equal to the item just added to the batch.  The elements can be any kind of data, depending on the backend that you are using.  `on_add`, `on_success` and `on_failure` also give access to the whole batch through the `batch` variable.
 
 ## Development
 
