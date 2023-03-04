@@ -116,16 +116,15 @@ RSpec.describe Basket do
 
   describe "#on_success" do
     it "is called after perform" do
-      stubbed_basket = DummyGroceryBasket.new
-      allow(DummyGroceryBasket).to receive(:new).and_return(stubbed_basket)
-      allow(stubbed_basket).to receive(:perform).and_call_original
-      allow(stubbed_basket).to receive(:on_success).and_call_original
+      stubbed_baskets = Mocktail.of_next(DummyGroceryBasket, count: 2)
+      performable_basket = stubbed_baskets[1]
+      Basket.add("DummyGroceryBasket", :milk)
+      Basket.add("DummyGroceryBasket", :cookies)
 
-      Basket.add("DummyGroceryBasket", :pene)
-      Basket.add("DummyGroceryBasket", :tomatos)
+      expect(DummyGroceryBasket.basket_options_hash).to eq({size: 2})
 
-      expect(stubbed_basket).to have_received(:on_success)
-      expect($stdout).to have_received(:puts).with("Add [:pene, :tomatos] to bag")
+      verify { performable_basket.perform }
+      verify { performable_basket.on_success }
     end
 
     it "is not called if perform raises an error" do
