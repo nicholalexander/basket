@@ -13,6 +13,10 @@ class DummyGroceryBasket
     puts "Checkout"
   end
 
+  def on_add
+    puts "Check coupons for #{element}"
+  end
+
   def on_success
     DummyGroceryBasket::Bag.add(batch)
   end
@@ -37,6 +41,10 @@ class DummyStockBasket
   def sell(stock)
     StockTrader.sell(stock)
   end
+
+  def on_add
+    puts "Check for insider trading on #{element[:ticker]}"
+  end
 end
 
 class DummyFireworksBasket
@@ -60,6 +68,7 @@ RSpec.describe Basket do
   before do
     Basket.config
     Basket.clear_all
+    allow($stdout).to receive(:puts)
   end
 
   describe "#add" do
@@ -98,6 +107,29 @@ RSpec.describe Basket do
 
       expect(stubbed_basket).to have_received(:perform)
       expect(Basket.config[:queue].length("DummyStockBasket")).to eq(0)
+    end
+  end
+
+  describe "#on_add" do
+    it "is called each time an element is added" do
+      stubbed_basket = DummyStockBasket.new
+      allow(DummyStockBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:on_add).and_call_original
+
+      Basket.add("DummyStockBasket", {ticker: :ibm, price: 1234})
+      Basket.add("DummyStockBasket", {ticker: :ibm, price: 1234})
+
+      expect($stdout).to have_received(:puts).twice
+    end
+
+    it "has access to the element through the element variable" do
+      stubbed_basket = DummyStockBasket.new
+      allow(DummyStockBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:on_add).and_call_original
+
+      Basket.add("DummyStockBasket", {ticker: :ibm, price: 1234})
+
+      expect($stdout).to have_received(:puts).with("Check for insider trading on ibm")
     end
   end
 
