@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "basket"
+require "mocktail"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -15,4 +16,8 @@ RSpec.configure do |config|
 
   config.filter_run focus: true
   config.run_all_when_everything_filtered = true
+  config.include Mocktail::DSL
+  config.after(:each) do
+    Mocktail.reset
+  end
 end
