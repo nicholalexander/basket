@@ -67,15 +67,14 @@ RSpec.describe Basket do
 
   describe "#perform" do
     it "will perform an action when the basket is full" do
-      stubbed_basket = DummyGroceryBasket.new
-      allow(DummyGroceryBasket).to receive(:new).and_return(stubbed_basket)
-      allow(stubbed_basket).to receive(:perform).and_call_original
-
+      stubbed_baskets = Mocktail.of_next(DummyGroceryBasket, count: 2)
+      performable_basket = stubbed_baskets[1]
       Basket.add("DummyGroceryBasket", :milk)
       Basket.add("DummyGroceryBasket", :cookies)
 
       expect(DummyGroceryBasket.basket_options_hash).to eq({size: 2})
-      expect(stubbed_basket).to have_received(:perform)
+
+      verify { performable_basket.perform }
     end
 
     it "processes the batch" do
@@ -97,24 +96,21 @@ RSpec.describe Basket do
 
   describe "#on_add" do
     it "is called each time an element is added" do
-      stubbed_basket = DummyStockBasket.new
-      allow(DummyStockBasket).to receive(:new).and_return(stubbed_basket)
-      allow(stubbed_basket).to receive(:on_add).and_call_original
+      stubbed_baskets = Mocktail.of_next(DummyStockBasket, count: 2)
 
       Basket.add("DummyStockBasket", {ticker: :ibm, price: 1234})
       Basket.add("DummyStockBasket", {ticker: :ibm, price: 1234})
 
-      expect($stdout).to have_received(:puts).twice
+      verify { stubbed_baskets[0].on_add }
+      verify { stubbed_baskets[1].on_add }
     end
 
     it "has access to the element through the element variable" do
-      stubbed_basket = DummyStockBasket.new
-      allow(DummyStockBasket).to receive(:new).and_return(stubbed_basket)
-      allow(stubbed_basket).to receive(:on_add).and_call_original
+      stubbed_basket = Mocktail.of_next(DummyStockBasket)
 
       Basket.add("DummyStockBasket", {ticker: :ibm, price: 1234})
 
-      expect($stdout).to have_received(:puts).with("Check for insider trading on ibm")
+      expect(stubbed_basket.element).to eq({ticker: :ibm, price: 1234})
     end
   end
 
