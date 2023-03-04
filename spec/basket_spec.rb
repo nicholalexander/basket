@@ -4,11 +4,6 @@ class DummyGroceryBasket
   include Basket::Batcher
   basket_options size: 2
 
-  class Bag
-    def self.add(groceries)
-    end
-  end
-
   def perform
     puts "Checkout"
   end
@@ -18,7 +13,7 @@ class DummyGroceryBasket
   end
 
   def on_success
-    DummyGroceryBasket::Bag.add(batch)
+    puts "Add #{batch} to bag"
   end
 end
 
@@ -139,13 +134,12 @@ RSpec.describe Basket do
       allow(DummyGroceryBasket).to receive(:new).and_return(stubbed_basket)
       allow(stubbed_basket).to receive(:perform).and_call_original
       allow(stubbed_basket).to receive(:on_success).and_call_original
-      allow(DummyGroceryBasket::Bag).to receive(:add)
 
       Basket.add("DummyGroceryBasket", :pene)
       Basket.add("DummyGroceryBasket", :tomatos)
 
       expect(stubbed_basket).to have_received(:on_success)
-      expect(DummyGroceryBasket::Bag).to have_received(:add)
+      expect($stdout).to have_received(:puts).with("Add [:pene, :tomatos] to bag")
     end
 
     it "is not called if perform raises an error" do
