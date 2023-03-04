@@ -20,5 +20,8 @@ module Basket
 
     def on_success
     end
+
+    def on_add
+    end
   end
 end

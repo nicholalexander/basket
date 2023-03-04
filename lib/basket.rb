@@ -19,9 +19,13 @@ module Basket
   def self.add(queue, data)
     queue_length = @config[:queue].push(queue, data)
     queue_class = Object.const_get(queue)
+    queue_instance = queue_class.new
+
+    queue_instance.define_singleton_method(:element) { data }
+    queue_instance.on_add
+
     return unless queue_length == queue_class.basket_options_hash[:size]
 
-    queue_instance = queue_class.new
     queue_instance.perform
     queue_instance.on_success
   end
