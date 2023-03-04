@@ -21,20 +21,10 @@ class DummyStockBasket
   include Basket::Batcher
   basket_options size: 3
 
-  class StockTrader
-    def self.sell(stock)
-      puts stock
-    end
-  end
-
   def perform
     batch.each do |stock|
-      sell(stock)
+      puts stock
     end
-  end
-
-  def sell(stock)
-    StockTrader.sell(stock)
   end
 
   def on_add
@@ -92,9 +82,6 @@ RSpec.describe Basket do
       stubbed_basket = DummyStockBasket.new
       allow(DummyStockBasket).to receive(:new).and_return(stubbed_basket)
       allow(stubbed_basket).to receive(:perform).and_call_original
-      expect(DummyStockBasket::StockTrader).to receive(:sell).with({ticker: :ibm, price: 1234}).ordered
-      expect(DummyStockBasket::StockTrader).to receive(:sell).with({ticker: :apl, price: 2345}).ordered
-      expect(DummyStockBasket::StockTrader).to receive(:sell).with({ticker: :asdf, price: 345}).ordered
 
       Basket.add("DummyStockBasket", {ticker: :ibm, price: 1234})
       Basket.add("DummyStockBasket", {ticker: :apl, price: 2345})
@@ -102,6 +89,9 @@ RSpec.describe Basket do
 
       expect(stubbed_basket).to have_received(:perform)
       expect(Basket.config[:queue].length("DummyStockBasket")).to eq(0)
+      expect($stdout).to have_received(:puts).with({price: 1234, ticker: :ibm})
+      expect($stdout).to have_received(:puts).with({price: 2345, ticker: :apl})
+      expect($stdout).to have_received(:puts).with({price: 345, ticker: :asdf})
     end
   end
 
