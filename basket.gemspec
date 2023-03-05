@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email = ["nichol.alexander@gmail.com "]
 
   spec.summary = "Wait until you have a bunch of things, then do something."
-  spec.description = "This is a longer description."
+  spec.description = "A simple no dependency way of accumulating things and then acting on them."
   spec.homepage = "https://github.com/nicholalexander/basket"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.6.0"
