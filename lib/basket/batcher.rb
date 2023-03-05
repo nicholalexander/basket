@@ -23,5 +23,9 @@ module Basket
 
     def on_add
     end
+
+    def on_failure
+      raise error
+    end
   end
 end

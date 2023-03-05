@@ -154,7 +154,40 @@ RSpec.describe Basket do
   end
 
   describe "#on_failure" do
-    it "is called if perform raises an error"
-    it "has the error available to it so it can reraise or swallow that error?"
+    it "is called if perform raises an error" do
+      stubbed_basket = DummyFireworksBasket.new
+      allow(DummyFireworksBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:on_failure).and_call_original
+
+      expect { Basket.add("DummyFireworksBasket", :bottle_rocket) }.to raise_error(/Boom/)
+
+      expect(stubbed_basket).to have_received(:on_failure)
+    end
+
+    it "is not called if perform doesn't raise an error" do
+      stubbed_baskets = Mocktail.of_next(DummyGroceryBasket, count: 2)
+      performable_basket = stubbed_baskets[1]
+
+      Basket.add("DummyGroceryBasket", :milk)
+      Basket.add("DummyGroceryBasket", :cookies)
+
+      verify { performable_basket.perform }
+      verify { performable_basket.on_add }
+      verify { performable_basket.on_success }
+      stubbed_baskets.each do |basket|
+        expect(Mocktail.calls(basket, :on_failure).size).to eq(0)
+      end
+    end
+
+    it "has the error available in the error variable so it can reraise or swallow that error" do
+      stubbed_basket = DummyFireworksBasket.new
+      allow(DummyFireworksBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:on_failure).and_call_original
+
+      expect { Basket.add("DummyFireworksBasket", :bottle_rocket) }.to raise_error(/Boom/)
+
+      expect(stubbed_basket.error).to be_a(RuntimeError)
+      expect(stubbed_basket.error.message).to eq("Boom")
+    end
   end
 end

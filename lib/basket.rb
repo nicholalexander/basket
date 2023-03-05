@@ -28,6 +28,9 @@ module Basket
 
     queue_instance.perform
     queue_instance.on_success
+  rescue => e
+    queue_instance.define_singleton_method(:error) { e }
+    queue_instance.on_failure
   end
 
   def self.clear_all
