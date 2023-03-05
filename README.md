@@ -62,10 +62,19 @@ class QuicheBasket
   def on_add
     element.wash
   end
+
+  def on_failure
+    Farm.notify_egg_monitor(error)
+    raise Error
+  end
 end
 ```
 
-The perform method will be called after there have been 15 elements added to the batch.  The callbacks are lifecycle callbacks on the existing batch.  `on_add` gives access to a variable called `element` which is equal to the item just added to the batch.  The elements can be any kind of data, depending on the backend that you are using.  `on_add`, `on_success` and `on_failure` also give access to the whole batch through the `batch` variable.
+The perform method will be called after there have been the defined number of elements added to the batch.  The elements can be any kind of data, depending on the backend that you are using.
+
+The callbacks are lifecycle callbacks on the existing batch.  `on_add` gives access to a variable called `element` which is equal to the item just added to the batch. `on_add`, `on_success` and `on_failure` also give access to the whole batch through the `batch` variable.  
+
+The `on_failure` use of batch of course may not have a full batch as the error could have been generated during `add` or `on_add`.  The `on_failure` callback also has access to an `error` variable which holds the error that was generated.
 
 ## Development
 
@@ -87,24 +96,5 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 Everyone interacting in the Basket project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/basket/blob/main/CODE_OF_CONDUCT.md).
 
-
-
-## Ideas
-
-1. Can the callbacks support ActiveSupport Notifications?
-   - ActiveSupport::Callbacks extraction of callbacks
-2. Batch can be postgres json blob or Redis! - Backend system
-~~3. Does not execute in line~~For now.
-~~4. Use ActiveJob for background execution.~~ It's up to you to handle a full basket how you want.
-~~5. "Buffer", "collection", "queue"~~ Basket.
-6. Default trigger is just queue length.
-7. Expose basket_options trigger: :check_some_thing_lambda
-8. Redis push pop.
-9. Make queue ephemeral?
-10. Define gotchas but don't solve them.
-11. Redis fetch / Super Fetch?
-12. Configuration.
-
-https://api.rubyonrails.org/classes/ActiveSupport/Callbacks.html
 
 
