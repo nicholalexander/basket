@@ -2,6 +2,7 @@
 
 require_relative "basket/batcher"
 require_relative "basket/configuration"
+require_relative "basket/error"
 require_relative "basket/hash_backend"
 require_relative "basket/queue_collection"
 require_relative "basket/version"
@@ -31,6 +32,7 @@ module Basket
     queue_instance.perform
     queue_instance.on_success
   rescue => e
+    raise e if e.instance_of?(Basket::Error)
     queue_instance.define_singleton_method(:error) { e }
     queue_instance.on_failure
   end

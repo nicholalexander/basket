@@ -46,6 +46,19 @@ class DummyFireworksBasket
   end
 end
 
+class NonPerformantBasket
+  include Basket::Batcher
+  basket_options size: 1
+end
+
+class DummyErrorsBasket
+  include Basket::Batcher
+
+  def on_failure
+    raise "This Error isn't raised!"
+  end
+end
+
 RSpec.describe Basket do
   it "has a version number" do
     expect(Basket::VERSION).not_to be nil
@@ -197,6 +210,21 @@ RSpec.describe Basket do
       expect(stubbed_basket.error).to be_a(RuntimeError)
       expect(stubbed_basket.error.message).to eq("Boom")
       expect($stdout).to have_received(:puts).with("wow, Boom was loud")
+    end
+
+    it "is not called when a Basket::Error is raised" do
+      stubbed_basket = DummyErrorsBasket.new
+      allow(DummyErrorsBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:on_failure).and_call_original
+
+      expect { Basket.add("DummyErrorsBasket", "Nothing") }.to raise_error(Basket::Error)
+      expect(stubbed_basket).not_to have_received(:on_failure)
+    end
+  end
+
+  context "when perform is not defined" do
+    it "raises an error" do
+      expect { Basket.add("NonPerformantBasket", :nap) }.to raise_error(Basket::Error, "You must implement perform in your Basket class.")
     end
   end
 
