@@ -39,6 +39,11 @@ class DummyFireworksBasket
   def perform
     raise "Boom"
   end
+
+  def on_failure
+    puts "wow, #{error.message} was loud"
+    raise error
+  end
 end
 
 RSpec.describe Basket do
@@ -188,6 +193,7 @@ RSpec.describe Basket do
 
       expect(stubbed_basket.error).to be_a(RuntimeError)
       expect(stubbed_basket.error.message).to eq("Boom")
+      expect($stdout).to have_received(:puts).with("wow, Boom was loud")
     end
   end
 end
