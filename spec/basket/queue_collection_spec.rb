@@ -1,7 +1,7 @@
-RSpec.describe Basket::Queue do
+RSpec.describe Basket::QueueCollection do
   describe "#push" do
     it "adds an element to the specified queue" do
-      q = Basket::Queue.new
+      q = Basket::QueueCollection.new
 
       q.push("PizzaBasket", "cheese")
 
@@ -9,7 +9,7 @@ RSpec.describe Basket::Queue do
     end
 
     it "returns the length of the queue" do
-      q = Basket::Queue.new
+      q = Basket::QueueCollection.new
 
       q.push("InvitationsBasket", "matt")
       length = q.push("InvitationsBasket", "erin")
@@ -20,7 +20,7 @@ RSpec.describe Basket::Queue do
 
   describe "#length" do
     it "returns the length of the specified queue" do
-      q = Basket::Queue.new
+      q = Basket::QueueCollection.new
 
       q.push("RockBasket", {color: :white, value_in_cents: 300})
       q.push("RockBasket", {color: :orange, value_in_cents: 600})
@@ -32,7 +32,7 @@ RSpec.describe Basket::Queue do
 
   describe "#pop_all" do
     it "returns all the elements in the specified queue" do
-      q = Basket::Queue.new
+      q = Basket::QueueCollection.new
 
       q.push("PlaylistBasket", {song: "Brown Study", artist: "Vansire"})
       q.push("PlaylistBasket", {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"})
