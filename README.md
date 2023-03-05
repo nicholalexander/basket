@@ -1,11 +1,11 @@
-# It would be silly to use this gem because it doesn't work yet.
-
 [![Gem Version](https://badge.fury.io/rb/basket.svg)](https://badge.fury.io/rb/basket)
 # Basket
 
-A farmer doesn't walk down to the chicken coop, grab an egg, go back to the kitchen, go back to the coop, go back to the kitchen, etc, etc.  They take a basket with them, and as the chickens lay their eggs, they fill up the basket and when the basket is full they go make something with them!  I would make a quiche, but that's besides the case.
+A farmer doesn't walk down to the chicken coop, grab an egg, go back to the kitchen, go back to the coop, go back to the kitchen ad infinitum.  They take a basket with them, and as the chickens lay their eggs, they fill up the basket and when the basket is full they go make something with them!  I would make a quiche, but that's besides the case.
 
 `Basket` lets you do just that.  Collect items until your basket is full and then, when it is, go do something with them!
+
+Basket is very new and under development.
 
 ## Installation
 
@@ -32,13 +32,15 @@ The item added to the basket can be any data you want!  If you are using the in 
 
 ```ruby
 class QuicheBasket
+  # Include the Basket::Batcher
   include Basket::Batcher
 
+  # Define the size of your basket
   basket_options size: 15
 
   def perform
     batch.each do | egg |
-      # do some processing on each element of the batch.  In this case there will be 15 eggs.
+      # Do some processing on each element of the batch.  In this case there will be 15 eggs.
     end
 
     # If you want to do something directly inline:
