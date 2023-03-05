@@ -1,5 +1,5 @@
 module Basket
-  class Queue
+  class QueueCollection
     def initialize(backend = HashBackend.new)
       @backend = backend
     end
@@ -19,6 +19,10 @@ module Basket
 
     def data
       @backend.data
+    end
+
+    def reset_backend
+      @backend = HashBackend.new
     end
   end
 end

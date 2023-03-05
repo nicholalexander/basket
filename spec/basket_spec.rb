@@ -66,7 +66,10 @@ RSpec.describe Basket do
       Basket.add("DummyGroceryBasket", :milk)
       Basket.add("DummyStockBasket", {stock: "IBM", purchased_price: 13036})
 
-      expect(Basket.contents).to eq({"DummyGroceryBasket" => [:milk], "DummyStockBasket" => [{purchased_price: 13036, stock: "IBM"}]})
+      expect(Basket.contents).to eq({
+        "DummyGroceryBasket" => [:milk],
+        "DummyStockBasket" => [{purchased_price: 13036, stock: "IBM"}]
+      })
     end
   end
 
@@ -92,7 +95,7 @@ RSpec.describe Basket do
       Basket.add("DummyStockBasket", {ticker: :asdf, price: 345})
 
       expect(stubbed_basket).to have_received(:perform)
-      expect(Basket.config[:queue].length("DummyStockBasket")).to eq(0)
+      expect(Basket.config.queue_collection.length("DummyStockBasket")).to eq(0)
       expect($stdout).to have_received(:puts).with({price: 1234, ticker: :ibm})
       expect($stdout).to have_received(:puts).with({price: 2345, ticker: :apl})
       expect($stdout).to have_received(:puts).with({price: 345, ticker: :asdf})
