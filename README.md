@@ -33,8 +33,8 @@ The item added to the basket can be any data you want!  If you are using the in 
 ```ruby
 class QuicheBasket
   include Basket::Batcher
-  
-  basket_options length: 15
+
+  basket_options size: 15
 
   def perform
     batch.each do | egg |
@@ -50,10 +50,10 @@ class QuicheBasket
   end
  
   # There are four callbacks to the lifecycle of a basket.
-  # :on_success, :on_failure, :on_add, :check_length
+  # :on_add, :on_success, and :on_failure.
   # They can be used like this:
   def on_success
-    let_chickens_rest
+    Farm.rest_chickens
     batch.each do |egg|
       egg.inspect
     end
@@ -70,11 +70,13 @@ class QuicheBasket
 end
 ```
 
-The perform method will be called after there have been the defined number of elements added to the batch.  The elements can be any kind of data, depending on the backend that you are using.
+The perform method will be called after there have been the defined number of elements added to the batch, specified in the `basket_options` size parameter.  The elements can be any kind of data, depending on the backend that you are using.  The default is just an in-memory hash.
 
-The callbacks are lifecycle callbacks on the existing batch.  `on_add` gives access to a variable called `element` which is equal to the item just added to the batch. `on_add`, `on_success` and `on_failure` also give access to the whole batch through the `batch` variable.  
+The callbacks are lifecycle callbacks on the existing batch.  `on_add` gives access to a variable called `element` which is equal to the item just added to the batch. `on_add`, `on_success` and `on_failure` also give access to the whole batch through the `batch` variable.  `on_success` is called after `perform`.  
 
-The `on_failure` use of batch of course may not have a full batch as the error could have been generated during `add` or `on_add`.  The `on_failure` callback also has access to an `error` variable which holds the error that was generated.
+The `on_failure` use of `batch` of course may not have a full batch as the error could have been generated during `add` or `on_add`.  The `on_failure` callback also has access to an `error` variable which holds the error that was generated.  
+
+Defining `on_add`, `on_failure`, and `on_success` is optional. 
 
 ## Development
 
