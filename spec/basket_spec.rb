@@ -199,4 +199,18 @@ RSpec.describe Basket do
       expect($stdout).to have_received(:puts).with("wow, Boom was loud")
     end
   end
+
+  describe ".contents" do
+    it "returns the values of all the queues" do
+      Basket.add("DummyGroceryBasket", "Onions")
+      Basket.add("DummyStockBasket", {ticker: "TSLA", value: 0})
+
+      expect(Basket.contents).to eq(
+        "DummyGroceryBasket" => ["Onions"],
+        "DummyStockBasket" => [{ticker: "TSLA", value: 0}]
+      )
+      expect(Basket.contents).to be_an(Hash)
+      expect(Basket.contents.keys.length).to eq(2)
+    end
+  end
 end

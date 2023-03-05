@@ -17,6 +17,11 @@ RSpec.configure do |config|
   config.filter_run focus: true
   config.run_all_when_everything_filtered = true
   config.include Mocktail::DSL
+
+  config.define_derived_metadata do |meta|
+    meta[:aggregate_failures] = true
+  end
+
   config.after(:each) do
     Mocktail.reset
   end
