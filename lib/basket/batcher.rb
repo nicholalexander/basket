@@ -1,4 +1,3 @@
-require_relative "./error"
 module Basket
   module Batcher
     def self.included(base)
