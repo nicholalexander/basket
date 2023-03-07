@@ -1,4 +1,4 @@
-[![Gem Version](https://badge.fury.io/rb/basket.svg)](https://badge.fury.io/rb/basket)
+[![Gem Version](https://badge.fury.io/rb/basket@2x.png)](https://badge.fury.io/rb/basket)
 [![Ruby Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://github.com/testdouble/standard)
 [![Tests](https://github.com/nicholalexander/basket/actions/workflows/main.yml/badge.svg)](https://github.com/nicholalexander/basket/actions/workflows/main.yml)
 # Basket
