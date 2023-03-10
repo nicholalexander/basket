@@ -5,7 +5,7 @@ module Basket
     end
 
     def backend
-      @backend ||= BackendAdapter::HashBackend
+      @backend ||= BackendAdapter::RedisBackend
     end
   end
 end

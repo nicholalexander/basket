@@ -2,6 +2,7 @@
 
 require "basket"
 require "mocktail"
+require "mock_redis"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -24,5 +25,10 @@ RSpec.configure do |config|
 
   config.after(:each) do
     Mocktail.reset
+  end
+
+  config.before(:each) do
+    mock_redis = MockRedis.new
+    allow(Redis).to receive(:new).and_return(mock_redis)
   end
 end

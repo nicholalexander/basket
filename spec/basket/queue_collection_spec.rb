@@ -40,8 +40,8 @@ RSpec.describe Basket::QueueCollection do
       data = q.pop_all("PlaylistBasket")
 
       expect(data.size).to eq(2)
-
       expect(data.is_a?(Enumerable)).to be true
+      expect(data).to match_array([{song: "Brown Study", artist: "Vansire"}, {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"}])
     end
   end
 end

@@ -1,11 +1,11 @@
 module Basket
   module BackendAdapter
     class HashBackend
-      attr_reader :data
-
       def initialize
         @data = {}
       end
+
+      attr_reader :data
 
       def push(queue, data)
         @data[queue] = [] if @data[queue].nil?
