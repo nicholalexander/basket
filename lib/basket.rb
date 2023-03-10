@@ -3,7 +3,8 @@
 require_relative "basket/batcher"
 require_relative "basket/configuration"
 require_relative "basket/error"
-require_relative "basket/hash_backend"
+require_relative "basket/backend_adapter/hash_backend"
+require_relative "basket/backend_adapter/redis_backend"
 require_relative "basket/queue_collection"
 require_relative "basket/version"
 
