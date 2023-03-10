@@ -1,7 +1,7 @@
 module Basket
   class QueueCollection
-    def initialize(backend = HashBackend.new)
-      @backend = backend
+    def initialize(backend = Basket.config.backend)
+      @backend = backend.new
     end
 
     def push(queue, data)
@@ -22,7 +22,7 @@ module Basket
     end
 
     def reset_backend
-      @backend = HashBackend.new
+      @backend = Basket.config.backend.new
     end
   end
 end
