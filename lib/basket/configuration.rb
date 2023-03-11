@@ -16,6 +16,8 @@ module Basket
         @backend = BackendAdapter::HashBackend
       when :redis
         @backend = BackendAdapter::RedisBackend
+      else
+        raise Basket::Error, "Unknown Backend"
       end
     end
   end

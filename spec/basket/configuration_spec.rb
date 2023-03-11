@@ -37,5 +37,10 @@ RSpec.describe Basket::Configuration do
       configuration.backend = :redis
       expect(configuration.backend).to eq(Basket::BackendAdapter::RedisBackend)
     end
+
+    it "raises a configuration error when you pass an unknown backend" do
+      configuration = Basket::Configuration.new
+      expect { configuration.backend = :bloop }.to raise_error(Basket::Error, /Unknown Backend/)
+    end
   end
 end
