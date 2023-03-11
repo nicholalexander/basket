@@ -84,6 +84,22 @@ The `on_failure` use of `batch` of course may not have a full batch as the error
 
 Defining `on_add`, `on_failure`, and `on_success` is optional. 
 
+## Configuration
+
+In an initializer, or somewhere equally appropriate, you might put something like this:
+
+```ruby
+Basket.config do |config|
+  config.redis_host = "127.0.0.2"
+  config.redis_port = 6390
+  config.redis_db = 10
+  config.backend = :redis
+end
+```
+
+The defaults for a redis backend are the standard "127.0.0.1", 6379, 15.
+The default for the backend is the HashBackend, which can be set by passing `:hash` to `config.backend`, but you don't have to do that.  Because it's the default!
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
