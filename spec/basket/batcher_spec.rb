@@ -29,8 +29,8 @@ RSpec.describe Basket::Batcher do
 
   describe "#batch" do
     it "pulls the data from the queue for the class" do
-      Basket.config.queue_collection.push("FlowerBasket", 10)
-      Basket.config.queue_collection.push("FlowerBasket", 12)
+      Basket.queue_collection.push("FlowerBasket", 10)
+      Basket.queue_collection.push("FlowerBasket", 12)
       flower_basket = FlowerBasket.new
       expect(flower_basket.batch).to eq([10, 12])
     end
