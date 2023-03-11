@@ -245,10 +245,10 @@ RSpec.describe Basket do
   describe ".configure" do
     it "configures the redis host" do
       Basket.configure do |config|
-        config.redis_host = "127.0.0.1"
+        config.redis_host = "some_non_standard_host"
       end
 
-      expect(Basket.config.redis_host).to eq("127.0.0.1")
+      expect(Basket.config.redis_host).to eq("some_non_standard_host")
     end
   end
 end
