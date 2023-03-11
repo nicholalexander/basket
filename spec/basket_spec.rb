@@ -108,7 +108,7 @@ RSpec.describe Basket do
       Basket.add("DummyStockBasket", {ticker: :asdf, price: 345})
 
       expect(stubbed_basket).to have_received(:perform)
-      expect(Basket.config.queue_collection.length("DummyStockBasket")).to eq(0)
+      expect(Basket.queue_collection.length("DummyStockBasket")).to eq(0)
       expect($stdout).to have_received(:puts).with({price: 1234, ticker: :ibm})
       expect($stdout).to have_received(:puts).with({price: 2345, ticker: :apl})
       expect($stdout).to have_received(:puts).with({price: 345, ticker: :asdf})

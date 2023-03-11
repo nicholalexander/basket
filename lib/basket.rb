@@ -19,9 +19,12 @@ module Basket
     @queue_collection.data
   end
 
+  def self.queue_collection
+    @queue_collection ||= Basket::QueueCollection.new
+  end
+
   def self.add(queue, data)
-    @queue_collection = config.queue_collection
-    queue_length = @queue_collection.push(queue, data)
+    queue_length = queue_collection.push(queue, data)
     queue_class = Object.const_get(queue)
     queue_instance = queue_class.new
 
@@ -39,6 +42,6 @@ module Basket
   end
 
   def self.clear_all
-    config.queue_collection.reset_backend
+    queue_collection.reset_backend
   end
 end
