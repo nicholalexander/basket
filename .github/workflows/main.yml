@@ -26,6 +26,4 @@ jobs:
     - name: Run the default task
       run: bundle exec rake
     - name: Publish code coverage
-      run: |
-        export GIT_BRANCH="${GITHUB_REF/refs\/heads\//}"
-        ./cc-test-reporter after-build -r ${{secrets.CODE_CLIMATE_REPORTER_ID}}
+      run: ./cc-test-reporter after-build -r ${{secrets.CODE_CLIMATE_REPORTER_ID}}
