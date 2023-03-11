@@ -241,4 +241,14 @@ RSpec.describe Basket do
       expect(Basket.contents.keys.length).to eq(2)
     end
   end
+
+  describe ".configure" do
+    it "configures the redis host" do
+      Basket.configure do |config|
+        config.redis_host = "127.0.0.1"
+      end
+
+      expect(Basket.config.redis_host).to eq("127.0.0.1")
+    end
+  end
 end
