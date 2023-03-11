@@ -15,6 +15,10 @@ module Basket
     @config ||= Configuration.new
   end
 
+  def self.configure
+    yield(config)
+  end
+
   def self.contents
     @queue_collection.data
   end
