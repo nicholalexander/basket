@@ -27,8 +27,8 @@
 group "specs", halt_on_fail: true do
   guard :rspec, all_on_start: false, cmd: "rspec" do
     watch(%r{^spec/.+_spec\.rb$})
-    watch(%r{^lib/(.+)\.rb$}) { |m| "spec/lib/#{m[1]}_spec.rb" }
-    watch("spec/spec_helper.rb") { "spec/lib" }
+    watch(%r{^lib/(.+)\.rb$}) { |m| "spec/#{m[1]}_spec.rb" }
+    watch("spec/spec_helper.rb") { "spec/" }
   end
 
   guard :standardrb, fix: true, all_on_start: true, progress: true do
