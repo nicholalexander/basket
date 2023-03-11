@@ -1,6 +1,8 @@
 [![Gem Version](https://badge.fury.io/rb/basket.svg)](https://badge.fury.io/rb/basket)
 [![Ruby Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://github.com/testdouble/standard)
 [![Tests](https://github.com/nicholalexander/basket/actions/workflows/main.yml/badge.svg)](https://github.com/nicholalexander/basket/actions/workflows/main.yml)
+[![Maintainability](https://api.codeclimate.com/v1/badges/dab6a6e193cbd9df2b3e/maintainability)](https://codeclimate.com/github/nicholalexander/basket/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/dab6a6e193cbd9df2b3e/test_coverage)](https://codeclimate.com/github/nicholalexander/basket/test_coverage)
 # Basket
 
 A farmer doesn't walk down to the chicken coop, grab an egg, go back to the kitchen, go back to the coop, go back to the kitchen ad infinitum.  They take a basket with them, and as the chickens lay their eggs, they fill up the basket and when the basket is full they go make something with them!  I would make a quiche, but that's besides the case.
