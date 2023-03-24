@@ -41,7 +41,8 @@ RSpec.describe Basket::QueueCollection do
 
       expect(data.size).to eq(2)
       expect(data.is_a?(Enumerable)).to be true
-      expect(data).to match_array([{song: "Brown Study", artist: "Vansire"}, {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"}])
+      expect(data).to match_array([{song: "Brown Study", artist: "Vansire"},
+        {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"}])
     end
   end
 end

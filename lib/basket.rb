@@ -41,6 +41,7 @@ module Basket
     queue_instance.on_success
   rescue => e
     raise e if e.instance_of?(Basket::Error)
+
     queue_instance.define_singleton_method(:error) { e }
     queue_instance.on_failure
   end
