@@ -77,11 +77,11 @@ RSpec.describe Basket do
   describe "#add" do
     it "allows you to track multiple baskets" do
       Basket.add("DummyGroceryBasket", :milk)
-      Basket.add("DummyStockBasket", {stock: "IBM", purchased_price: 13036})
+      Basket.add("DummyStockBasket", {stock: "IBM", purchased_price: 13_036})
 
       expect(Basket.contents).to eq({
         "DummyGroceryBasket" => [:milk],
-        "DummyStockBasket" => [{purchased_price: 13036, stock: "IBM"}]
+        "DummyStockBasket" => [{purchased_price: 13_036, stock: "IBM"}]
       })
     end
   end
@@ -224,7 +224,10 @@ RSpec.describe Basket do
 
   context "when perform is not defined" do
     it "raises an error" do
-      expect { Basket.add("NonPerformantBasket", :nap) }.to raise_error(Basket::Error, "You must implement perform in your Basket class.")
+      expect do
+        Basket.add("NonPerformantBasket",
+          :nap)
+      end.to raise_error(Basket::Error, "You must implement perform in your Basket class.")
     end
   end
 

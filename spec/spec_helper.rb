@@ -33,7 +33,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    allow(Redis).to receive(:new).and_wrap_original do |_original_method, *args, &block|
+    allow(Redis).to receive(:new).and_wrap_original do |_original_method, *args|
       MockRedis.new(*args)
     end
   end
