@@ -33,7 +33,8 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    mock_redis = MockRedis.new
-    allow(Redis).to receive(:new).and_return(mock_redis)
+    allow(Redis).to receive(:new).and_wrap_original do |_original_method, *args, &block|
+      MockRedis.new(*args)
+    end
   end
 end
