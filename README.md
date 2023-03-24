@@ -94,10 +94,12 @@ Basket.config do |config|
   config.redis_port = 6390
   config.redis_db = 10
   config.backend = :redis
+  config.namespace = :basket
 end
 ```
 
-The defaults for a redis backend are the standard "127.0.0.1", 6379, 15.
+The defaults for a redis backend are the standard "127.0.0.1", 6379, 15 with a namespace of :basket.
+
 The default for the backend is the HashBackend, which can be set by passing `:hash` to `config.backend`, but you don't have to do that.  Because it's the default!
 
 ## Development
