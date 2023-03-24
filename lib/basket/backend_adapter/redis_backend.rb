@@ -6,8 +6,16 @@ module Basket
       attr_reader :client
 
       def initialize
-        redis_connection = Redis.new
-        @client = Redis::Namespace.new(:basket, redis: redis_connection)
+        redis_connection = Redis.new(
+          host: Basket.config.redis_host,
+          port: Basket.config.redis_port,
+          db: Basket.config.redis_db
+        )
+
+        @client = Redis::Namespace.new(
+          Basket.config.namespace,
+          redis: redis_connection
+        )
       end
 
       def data

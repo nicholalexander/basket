@@ -7,6 +7,7 @@ RSpec.describe Basket::Configuration do
       expect(configuration.redis_port).to eq(6379)
       expect(configuration.redis_db).to eq(15)
       expect(configuration.backend).to eq(Basket::BackendAdapter::HashBackend)
+      expect(configuration.namespace).to eq(:basket)
     end
   end
 
@@ -17,11 +18,13 @@ RSpec.describe Basket::Configuration do
       configuration.redis_port = 10
       configuration.redis_db = 100_000
       configuration.backend = :redis
+      configuration.namespace = :something_else
 
       expect(configuration.redis_host).to eq("something else")
       expect(configuration.redis_port).to eq(10)
       expect(configuration.redis_db).to eq(100_000)
       expect(configuration.backend).to eq(Basket::BackendAdapter::RedisBackend)
+      expect(configuration.namespace).to eq(:something_else)
     end
   end
 

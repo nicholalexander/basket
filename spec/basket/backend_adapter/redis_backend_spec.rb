@@ -40,4 +40,17 @@ RSpec.describe Basket::BackendAdapter::RedisBackend do
       expect(backend.pop_all("test_queue")).to eq([{a: 1}, {b: 2}])
     end
   end
+
+  describe "client" do
+    it "returns the redis client" do
+      expect(described_class.new.client).to be_a(Redis::Namespace)
+    end
+
+    it "configures the client based on the Basket::Configuration" do
+      expect(described_class.new.client.redis.host).to eq(Basket.config.redis_host)
+      expect(described_class.new.client.redis.port).to eq(Basket.config.redis_port)
+      expect(described_class.new.client.redis.db).to eq(Basket.config.redis_db)
+      expect(described_class.new.client.namespace).to eq(Basket.config.namespace)
+    end
+  end
 end

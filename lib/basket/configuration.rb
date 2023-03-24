@@ -1,6 +1,6 @@
 module Basket
   class Configuration
-    attr_accessor :redis_host, :redis_port, :redis_db
+    attr_accessor :redis_host, :redis_port, :redis_db, :namespace
     attr_reader :backend
 
     def initialize
@@ -8,6 +8,7 @@ module Basket
       @redis_port = 6379
       @redis_db = 15
       @backend = BackendAdapter::HashBackend
+      @namespace = :basket
     end
 
     def backend=(backend)
