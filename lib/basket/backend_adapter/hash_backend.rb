@@ -1,6 +1,6 @@
 module Basket
-  module BackendAdapter
-    class HashBackend
+  class BackendAdapter
+    class HashBackend < Basket::BackendAdapter
       def initialize
         @data = {}
       end
@@ -24,10 +24,6 @@ module Basket
 
       def clear(queue)
         @data[queue] = []
-      end
-
-      def pop_all(queue)
-        @data.delete(queue)
       end
     end
   end
