@@ -38,10 +38,12 @@ module Basket
         @client.llen(queue)
       end
 
-      def pop_all(queue)
-        results = deserialized_queue_data(queue)
+      def clear(queue)
         @client.del(queue)
-        results
+      end
+
+      def read(queue)
+        deserialized_queue_data(queue)
       end
 
       private
