@@ -59,6 +59,23 @@ class DummyErrorsBasket
   end
 end
 
+class BatchBugBasket
+  include Basket::Batcher
+  basket_options size: 1
+
+  def on_add
+    puts batch
+  end
+
+  def perform
+    puts batch
+  end
+
+  def on_success
+    puts batch
+  end
+end
+
 RSpec.describe Basket do
   it "has a version number" do
     expect(Basket::VERSION).not_to be nil
@@ -132,6 +149,17 @@ RSpec.describe Basket do
       Basket.add("DummyStockBasket", {ticker: :ibm, price: 1234})
 
       expect(stubbed_basket.element).to eq({ticker: :ibm, price: 1234})
+    end
+
+    it "has access to the batch during on_add, perform, and on_success" do
+      stubbed_basket = BatchBugBasket.new
+      allow(BatchBugBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:perform).and_call_original
+      allow(stubbed_basket).to receive(:on_add).and_call_original
+
+      Basket.add("BatchBugBasket", {ticker: :ibm, price: 1234})
+
+      expect($stdout).to have_received(:puts).with([{ticker: :ibm, price: 1234}]).exactly(3).times
     end
   end
 
