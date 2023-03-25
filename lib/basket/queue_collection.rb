@@ -13,8 +13,12 @@ module Basket
       @backend.length(queue)
     end
 
-    def pop_all(queue)
-      @backend.pop_all(queue)
+    def read(queue)
+      @backend.read(queue)
+    end
+
+    def clear(queue)
+      @backend.clear(queue)
     end
 
     def data

@@ -18,7 +18,7 @@ module Basket
     end
 
     def batch
-      @batch ||= Basket.queue_collection.pop_all(self.class.name)
+      @batch ||= Basket.queue_collection.read(self.class.name)
     end
 
     def perform

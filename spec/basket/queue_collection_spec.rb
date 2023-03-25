@@ -30,19 +30,43 @@ RSpec.describe Basket::QueueCollection do
     end
   end
 
-  describe "#pop_all" do
-    it "returns all the elements in the specified queue" do
+  describe "#read" do
+    it "returns the elements in the specified queue" do
       q = Basket::QueueCollection.new
 
       q.push("PlaylistBasket", {song: "Brown Study", artist: "Vansire"})
       q.push("PlaylistBasket", {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"})
 
-      data = q.pop_all("PlaylistBasket")
+      data = q.read("PlaylistBasket")
 
       expect(data.size).to eq(2)
       expect(data.is_a?(Enumerable)).to be true
       expect(data).to match_array([{song: "Brown Study", artist: "Vansire"},
         {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"}])
+    end
+
+    it "preserves the data in the queue" do
+      q = Basket::QueueCollection.new
+
+      q.push("PlaylistBasket", {song: "Brown Study", artist: "Vansire"})
+      q.push("PlaylistBasket", {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"})
+
+      q.read("PlaylistBasket")
+
+      expect(q.length("PlaylistBasket")).to eq(2)
+    end
+  end
+
+  describe "#clear" do
+    it "clears the specified queue" do
+      q = Basket::QueueCollection.new
+
+      q.push("StockBasket", {symbol: "AAPL", price: 100.00})
+      q.push("StockBasket", {symbol: "GOOG", price: 200.00})
+
+      q.clear("StockBasket")
+
+      expect(q.read("StockBasket")).to eq([])
     end
   end
 end

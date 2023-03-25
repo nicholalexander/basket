@@ -18,6 +18,14 @@ module Basket
         @data[queue].length
       end
 
+      def read(queue)
+        @data[queue]
+      end
+
+      def clear(queue)
+        @data[queue] = []
+      end
+
       def pop_all(queue)
         @data.delete(queue)
       end
