@@ -1,8 +1,8 @@
 require "redis-namespace"
 
 module Basket
-  module BackendAdapter
-    class RedisBackend
+  class BackendAdapter
+    class RedisBackend < Basket::BackendAdapter
       attr_reader :client
 
       def initialize

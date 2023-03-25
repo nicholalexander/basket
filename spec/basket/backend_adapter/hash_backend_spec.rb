@@ -1,4 +1,4 @@
-RSpec.describe Basket::BackendAdapter::RedisBackend do
+RSpec.describe Basket::BackendAdapter::HashBackend do
   describe "#data" do
     it "returns all the basket entries" do
       backend = described_class.new
@@ -17,7 +17,7 @@ RSpec.describe Basket::BackendAdapter::RedisBackend do
     it "pushes an item into the given queue" do
       result = described_class.new.push("test_queue", {a: 1})
 
-      expect(result).to eq(1)
+      expect(result).to eq([{a: 1}])
     end
   end
 
@@ -31,29 +31,28 @@ RSpec.describe Basket::BackendAdapter::RedisBackend do
     end
   end
 
-  describe "#pop_all" do
+  describe "#read" do
     it "returns all the elements in the given queue" do
       backend = described_class.new
       backend.push("test_queue", {a: 1})
       backend.push("test_queue", {b: 2})
 
-      expect(backend.pop_all("test_queue")).to eq([{a: 1}, {b: 2}])
+      expect(backend.read("test_queue")).to eq([{a: 1}, {b: 2}])
     end
   end
 
-  describe "client" do
-    it "returns the redis client" do
-      expect(described_class.new.client).to be_a(Redis::Namespace)
-    end
+  describe "#clear" do
+    it "clears the given queue" do
+      backend = described_class.new
+      backend.push("test_queue", {a: 1})
+      backend.push("test_queue", {b: 2})
 
-    it "configures the client based on the Basket::Configuration" do
-      expect(described_class.new.client.redis.host).to eq(Basket.config.redis_host)
-      expect(described_class.new.client.redis.port).to eq(Basket.config.redis_port)
-      expect(described_class.new.client.redis.db).to eq(Basket.config.redis_db)
-      expect(described_class.new.client.namespace).to eq(Basket.config.namespace)
+      backend.clear("test_queue")
+
+      expect(backend.read("test_queue")).to eq([])
     end
   end
-  
+
   describe "it implements the backend adapter interface" do
     include_examples "backend adapter", described_class
   end
