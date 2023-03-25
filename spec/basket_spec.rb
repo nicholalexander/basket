@@ -144,7 +144,9 @@ RSpec.describe Basket do
     end
 
     it "has access to the element through the element variable" do
-      stubbed_basket = Mocktail.of_next(DummyStockBasket)
+      stubbed_basket = DummyStockBasket.new
+      allow(DummyStockBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:on_add).and_call_original
 
       Basket.add("DummyStockBasket", {ticker: :ibm, price: 1234})
 
