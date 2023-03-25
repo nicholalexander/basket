@@ -6,6 +6,12 @@ require_relative "basket/backend_adapter/redis_backend"
 require_relative "basket/batcher"
 require_relative "basket/configuration"
 require_relative "basket/error"
+<<<<<<< HEAD
+=======
+require_relative "basket/backend_adapter/hash_backend"
+require_relative "basket/backend_adapter/redis_backend"
+require_relative "basket/handle_add"
+>>>>>>> 7df2e87 (refactor)
 require_relative "basket/queue_collection"
 require_relative "basket/version"
 
@@ -29,23 +35,7 @@ module Basket
   end
 
   def self.add(queue, data)
-    queue_length = queue_collection.push(queue, data)
-    queue_class = Object.const_get(queue)
-    queue_instance = queue_class.new
-
-    queue_instance.define_singleton_method(:element) { data }
-    queue_instance.on_add
-
-    return unless queue_length == queue_class.basket_options_hash[:size]
-
-    queue_instance.perform
-    queue_instance.on_success
-    queue_collection.clear(queue)
-  rescue => e
-    raise e if e.instance_of?(Basket::Error)
-
-    queue_instance.define_singleton_method(:error) { e }
-    queue_instance.on_failure
+    HandleAdd.new(queue, data).call
   end
 
   def self.clear_all
