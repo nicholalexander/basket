@@ -31,16 +31,6 @@ RSpec.describe Basket::BackendAdapter::RedisBackend do
     end
   end
 
-  describe "#pop_all" do
-    it "returns all the elements in the given queue" do
-      backend = described_class.new
-      backend.push("test_queue", {a: 1})
-      backend.push("test_queue", {b: 2})
-
-      expect(backend.pop_all("test_queue")).to eq([{a: 1}, {b: 2}])
-    end
-  end
-
   describe "client" do
     it "returns the redis client" do
       expect(described_class.new.client).to be_a(Redis::Namespace)
@@ -53,7 +43,7 @@ RSpec.describe Basket::BackendAdapter::RedisBackend do
       expect(described_class.new.client.namespace).to eq(Basket.config.namespace)
     end
   end
-  
+
   describe "it implements the backend adapter interface" do
     include_examples "backend adapter", described_class
   end
