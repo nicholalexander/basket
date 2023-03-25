@@ -39,6 +39,7 @@ module Basket
 
     queue_instance.perform
     queue_instance.on_success
+    queue_collection.clear(queue)
   rescue => e
     raise e if e.instance_of?(Basket::Error)
 
