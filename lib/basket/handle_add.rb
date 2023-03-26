@@ -10,8 +10,8 @@ module Basket
       @queue_collection = Basket.queue_collection
     end
 
-    def call(queue = @queue, data = @data)
-      queue_length = @queue_collection.push(queue, data)
+    def call(data = @data)
+      queue_length = @queue_collection.push(@queue, data)
       queue_class = class_for_queue
       queue_instance = queue_class.new
 
@@ -22,9 +22,9 @@ module Basket
 
       queue_instance.perform
       queue_instance.on_success
-      @queue_collection.clear(queue)
+      @queue_collection.clear(@queue)
     rescue => e
-      raise e if e.instance_of?(Basket::Error)
+      raise e if basket_error?(e)
 
       queue_instance.define_singleton_method(:error) { e }
       queue_instance.on_failure
@@ -38,6 +38,10 @@ module Basket
 
     def basket_full?(queue_length, queue_class)
       queue_length == queue_class.basket_options_hash[:size]
+    end
+
+    def basket_error?(e)
+      e.instance_of?(Basket::Error)
     end
   end
 end
