@@ -110,6 +110,8 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 This project uses Guard to facilitate local development.  You can run it with `bundle exec guard`.  It will run specs on change to files and will run `standard --fix` after passing tests.
 
+Looking through the code base, the majority of the work happens in [lib/basket/handle_add.rb](https://github.com/nicholalexander/basket/blob/main/lib/basket/handle_add.rb).  Alternatively, you might be interested in the [backend adapters](https://github.com/nicholalexander/basket/tree/main/lib/basket/backend_adapter) for how the gem works with in memory hashes and/or a redis backend.
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/nicholalexander/basket. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/nicholalexander/basket/blob/main/CODE_OF_CONDUCT.md).
