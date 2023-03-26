@@ -26,7 +26,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
 Add items to your basket as they come along.  They might come along quickly, or there might be a delay between them.  Regardless, you want to collect items into your basket before going and doing something with them.
 
 ```ruby
-while chicken.laying do 
+while chicken.laying? do 
   egg = { egg: {color: brown, size: medium}}
   Basket.add('QuicheBasket', egg)
 end
