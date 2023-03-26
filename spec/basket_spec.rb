@@ -101,6 +101,12 @@ RSpec.describe Basket do
         "DummyStockBasket" => [{purchased_price: 13_036, stock: "IBM"}]
       })
     end
+
+    it "raises a helpful error if the basket doesn't exist" do
+      expect {
+        Basket.add("NonExistantBasket", :milk)
+      }.to raise_error(Basket::BasketNotFoundError).with_message("We couldn't find that basket anywhere, please make sure it is defined. | uninitialized constant NonExistantBasket")
+    end
   end
 
   describe "#perform" do
