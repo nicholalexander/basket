@@ -42,4 +42,12 @@ RSpec.describe Basket::Batcher do
       expect { flower_basket.perform }.to raise_error("You must implement perform in your Basket class.")
     end
   end
+
+  describe "#on_failure" do
+    it "raises the error" do
+      flower_basket = FlowerBasket.new
+      flower_basket.define_singleton_method(:error) { StandardError.new("bloop") }
+      expect { flower_basket.on_failure }.to raise_error(StandardError, "bloop")
+    end
+  end
 end
