@@ -17,11 +17,13 @@ module Basket
 
       queue_instance.perform
       queue_instance.on_success
+      Basket.queue_collection.clear(queue)
     rescue => e
       raise e if e.instance_of?(Basket::Error)
 
       queue_instance.define_singleton_method(:error) { e }
       queue_instance.on_failure
+      Basket.queue_collection.clear(queue)
     end
   end
 end
