@@ -6,12 +6,7 @@ require_relative "basket/backend_adapter/redis_backend"
 require_relative "basket/batcher"
 require_relative "basket/configuration"
 require_relative "basket/error"
-<<<<<<< HEAD
-=======
-require_relative "basket/backend_adapter/hash_backend"
-require_relative "basket/backend_adapter/redis_backend"
 require_relative "basket/handle_add"
->>>>>>> 7df2e87 (refactor)
 require_relative "basket/queue_collection"
 require_relative "basket/version"
 
