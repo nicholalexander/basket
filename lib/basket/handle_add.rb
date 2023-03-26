@@ -23,7 +23,6 @@ module Basket
 
       queue_instance.define_singleton_method(:error) { e }
       queue_instance.on_failure
-      Basket.queue_collection.clear(queue)
     end
   end
 end
