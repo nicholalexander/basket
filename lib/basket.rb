@@ -30,7 +30,7 @@ module Basket
   end
 
   def self.add(queue, data)
-    HandleAdd.new(queue, data).call
+    HandleAdd.call(queue, data)
   end
 
   def self.clear_all
