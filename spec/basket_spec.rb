@@ -81,10 +81,6 @@ RSpec.describe Basket do
     expect(Basket::VERSION).not_to be nil
   end
 
-  it "will do something useful in the future" do
-    expect(true).to eq(true)
-  end
-
   before do
     Basket.config
     Basket.clear_all
