@@ -55,7 +55,7 @@ class QuicheBasket
     BrunchInviteJob.perform_async
   end
  
-  # There are four callbacks to the lifecycle of a basket.
+  # There are three callbacks to the lifecycle of a basket.
   # :on_add, :on_success, and :on_failure.
   # They can be used like this:
   def on_success
