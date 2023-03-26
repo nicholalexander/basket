@@ -30,6 +30,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "redis"
   spec.add_dependency "redis-namespace"
 
-
   spec.add_development_dependency "mock_redis"
 end

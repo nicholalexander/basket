@@ -34,6 +34,8 @@ module Basket
 
     def class_for_queue
       Object.const_get(@queue)
+    rescue NameError => e
+      raise Basket::BasketNotFoundError, "We couldn't find that basket anywhere, please make sure it is defined. | #{e.message}"
     end
 
     def basket_full?(queue_length, queue_class)
@@ -41,7 +43,7 @@ module Basket
     end
 
     def basket_error?(e)
-      e.instance_of?(Basket::Error)
+      e.instance_of?(Basket::Error) || e.instance_of?(Basket::BasketNotFoundError)
     end
   end
 end
