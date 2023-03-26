@@ -5,8 +5,8 @@ require_relative "lib/basket/version"
 Gem::Specification.new do |spec|
   spec.name = "basket"
   spec.version = Basket::VERSION
-  spec.authors = ["nichol alexander"]
-  spec.email = ["nichol.alexander@gmail.com"]
+  spec.authors = ["nichol alexander", "alec clarke"]
+  spec.email = ["nichol.alexander@gmail.com", "alec.clarke.dev@gmail.com"]
 
   spec.summary = "Wait until you have a bunch of things, then do something."
   spec.description = "A simple way of accumulating things and then acting on them."
