@@ -89,7 +89,7 @@ Defining `on_add`, `on_failure`, and `on_success` is optional.
 In an initializer, or somewhere equally appropriate, you might put something like this:
 
 ```ruby
-Basket.config do |config|
+Basket.configure do |config|
   config.redis_host = "127.0.0.2"
   config.redis_port = 6390
   config.redis_db = 10
