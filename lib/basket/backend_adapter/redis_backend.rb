@@ -56,7 +56,7 @@ module Basket
         end
       end
 
-      def redis_connection_from_host 
+      def redis_connection_from_host
         Redis.new(
           host: Basket.config.redis_host,
           port: Basket.config.redis_port,
