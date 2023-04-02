@@ -65,7 +65,9 @@ module Basket
       end
 
       def redis_connection_from_url
-        Redis.new(url: Basket.config.redis_url)
+        Redis.new(
+          url: Basket.config.redis_url
+        )
       end
     end
   end
