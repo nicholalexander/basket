@@ -11,7 +11,12 @@ module Basket
 
     def call(data = @data)
       setup_batchers
-      run_lifecycle
+      add_to_basket
+      return unless basket_full?(@queue_length, @queue_class)
+      perform
+    rescue => error
+      raise error if basket_error?(error)
+      failure(error)
     end
 
     private
@@ -22,19 +27,19 @@ module Basket
       @queue_instance = @queue_class.new
     end
 
-    def run_lifecycle(data = @data)
-      queue_length = @queue_collection.push(@queue, data)
+    def add_to_basket(data = @data)
+      @queue_length = @queue_collection.push(@queue, data)
       @queue_instance.define_singleton_method(:element) { data }
       @queue_instance.on_add
+    end
 
-      return unless basket_full?(queue_length, @queue_class)
-
+    def perform
       @queue_instance.perform
       @queue_instance.on_success
       @queue_collection.clear(@queue)
-    rescue => error
-      raise error if basket_error?(error)
+    end
 
+    def failure(error)
       @queue_instance.define_singleton_method(:error) { error }
       @queue_instance.on_failure
     end
