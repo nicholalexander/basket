@@ -98,10 +98,18 @@ Basket.configure do |config|
 end
 ```
 
-The defaults for a redis backend are the standard "127.0.0.1", 6379, 15 with a namespace of :basket.
+The defaults for a redis backend are the standard `"127.0.0.1"`, `6379`, `15` with a namespace of `:basket`.
 
 The default for the backend is the HashBackend, which can be set by passing `:hash` to `config.backend`, but you don't have to do that.  Because it's the default!
 
+For the redis configuration, you can alternatively pass a url, thusly:
+
+```ruby
+Basket.configure do |config|
+  config.backend = :redis
+  config.redis_url = "redis://:p4ssw0rd@10.0.1.1:6380/15"
+end
+```
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
