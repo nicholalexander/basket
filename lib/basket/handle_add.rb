@@ -9,13 +9,12 @@ module Basket
       @data = data
     end
 
-    def call(data = @data)
+    def call
       setup_batchers
       add_to_basket
-      return unless basket_full?(@queue_length, @queue_class)
-      perform
+      perform if basket_full?(@queue_length, @queue_class)
     rescue => error
-      raise error if basket_error?(error)
+      maybe_raise_basket_error(error)
       failure(error)
     end
 
@@ -57,8 +56,9 @@ module Basket
       queue_length == queue_class.basket_options_hash[:size]
     end
 
-    def basket_error?(e)
-      e.instance_of?(Basket::Error) || e.instance_of?(Basket::BasketNotFoundError)
+    def maybe_raise_basket_error(e)
+      raise e if e.instance_of?(Basket::Error)
+      raise e if e.instance_of?(Basket::BasketNotFoundError)
     end
   end
 end
