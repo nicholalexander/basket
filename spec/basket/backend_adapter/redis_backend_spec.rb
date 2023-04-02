@@ -36,11 +36,21 @@ RSpec.describe Basket::BackendAdapter::RedisBackend do
       expect(described_class.new.client).to be_a(Redis::Namespace)
     end
 
-    it "configures the client based on the Basket::Configuration" do
-      expect(described_class.new.client.redis.host).to eq(Basket.config.redis_host)
-      expect(described_class.new.client.redis.port).to eq(Basket.config.redis_port)
-      expect(described_class.new.client.redis.db).to eq(Basket.config.redis_db)
-      expect(described_class.new.client.namespace).to eq(Basket.config.namespace)
+    context "when the configuration is to use host and port" do
+      it "configures the client based on the Basket::Configuration" do
+        expect(described_class.new.client.redis.host).to eq(Basket.config.redis_host)
+        expect(described_class.new.client.redis.port).to eq(Basket.config.redis_port)
+        expect(described_class.new.client.redis.db).to eq(Basket.config.redis_db)
+        expect(described_class.new.client.namespace).to eq(Basket.config.namespace)
+      end
+    end
+
+    context "when the configuration is to use a redis url" do
+      it "configures the client based on the Basket::Configuration" do
+        Basket.config.redis_url = "redis://:p4ssw0rd@10.0.1.1:6380/15"
+        expect(described_class.new.client.redis.options[:url]).to eq(Basket.config.redis_url)
+        Basket.config.redis_url = nil
+      end
     end
   end
 
