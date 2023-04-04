@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    basket (0.0.3)
+    basket (0.0.5)
       redis
       redis-namespace
 
