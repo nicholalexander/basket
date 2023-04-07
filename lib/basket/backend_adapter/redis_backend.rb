@@ -1,4 +1,5 @@
 require "redis-namespace"
+require "json"
 
 module Basket
   class BackendAdapter
@@ -25,9 +26,7 @@ module Basket
       end
 
       def push(queue, data)
-        # TODO: should we use JSON vs Marshal?
-        marshalled_data = Marshal.dump(data)
-        @client.lpush(queue, marshalled_data)
+        @client.lpush(queue, serialize_data(data))
       end
 
       def length(queue)
@@ -44,8 +43,12 @@ module Basket
 
       private
 
+      def serialize_data(data)
+        JSON.generate(data)
+      end
+
       def deserialized_queue_data(queue)
-        @client.lrange(queue, 0, -1).reverse.map { |marshalled_data| Marshal.load(marshalled_data) }
+        @client.lrange(queue, 0, -1).reverse.map { |serialized_data| JSON.parse(serialized_data) }
       end
 
       def select_redis_connection

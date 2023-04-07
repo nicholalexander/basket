@@ -32,7 +32,7 @@ while chicken.laying? do
 end
 ```
 
-The item added to the basket can be any data you want!  If you are using the in memory Queue, it is fine to store Ruby objects, but if you have a different backend, it might be better to stick to easily serializable objects.
+The item added to the basket can be any data you want!  If you are using the in memory Queue, it is fine to store Ruby objects, but if you have a different backend, must be JSON serializable via `to_json`.
 
 ```ruby
 class QuicheBasket
