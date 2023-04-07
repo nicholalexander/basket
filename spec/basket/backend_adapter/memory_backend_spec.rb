@@ -1,4 +1,4 @@
-RSpec.describe Basket::BackendAdapter::HashBackend do
+RSpec.describe Basket::BackendAdapter::MemoryBackend do
   describe "#data" do
     it "returns all the basket entries" do
       backend = described_class.new

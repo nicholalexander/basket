@@ -100,7 +100,7 @@ end
 
 The defaults for a redis backend are the standard `"127.0.0.1"`, `6379`, `15` with a namespace of `:basket`.
 
-The default for the backend is the HashBackend, which can be set by passing `:hash` to `config.backend`, but you don't have to do that.  Because it's the default!
+The default for the backend is the MemoryBackend, which can be set by passing `:memory` to `config.backend`, but you don't have to do that.  Because it's the default!
 
 For the redis configuration, you can alternatively pass a url, thusly:
 

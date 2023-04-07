@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "basket/backend_adapter"
-require_relative "basket/backend_adapter/hash_backend"
+require_relative "basket/backend_adapter/memory_backend"
 require_relative "basket/backend_adapter/redis_backend"
 require_relative "basket/batcher"
 require_relative "basket/configuration"
