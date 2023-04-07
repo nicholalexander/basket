@@ -6,7 +6,7 @@ RSpec.describe Basket::Configuration do
       expect(configuration.redis_host).to eq("127.0.0.1")
       expect(configuration.redis_port).to eq(6379)
       expect(configuration.redis_db).to eq(15)
-      expect(configuration.backend).to eq(Basket::BackendAdapter::HashBackend)
+      expect(configuration.backend).to eq(Basket::BackendAdapter::MemoryBackend)
       expect(configuration.namespace).to eq(:basket)
       expect(configuration.redis_url).to eq(nil)
     end
@@ -32,10 +32,10 @@ RSpec.describe Basket::Configuration do
   end
 
   describe "#backend=" do
-    it "sets the hash backend when :hash is passed" do
+    it "sets the memory backend when :memory is passed" do
       configuration = Basket::Configuration.new
-      configuration.backend = :hash
-      expect(configuration.backend).to eq(Basket::BackendAdapter::HashBackend)
+      configuration.backend = :memory
+      expect(configuration.backend).to eq(Basket::BackendAdapter::MemoryBackend)
     end
 
     it "sets the redis backend when :redis is passed" do

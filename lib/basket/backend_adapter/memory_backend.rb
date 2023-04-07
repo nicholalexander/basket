@@ -1,6 +1,6 @@
 module Basket
   class BackendAdapter
-    class HashBackend < Basket::BackendAdapter
+    class MemoryBackend < Basket::BackendAdapter
       def initialize
         @data = {}
       end
