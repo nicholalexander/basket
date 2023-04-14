@@ -5,7 +5,7 @@ module Basket
     end
 
     def push(queue, data)
-      @backend.push(queue, data)
+      @backend.push(queue, Element.new(data))
       length(queue)
     end
 
@@ -14,7 +14,8 @@ module Basket
     end
 
     def read(queue)
-      @backend.read(queue)
+      raw_queue = @backend.read(queue)
+      raw_queue.map { |element| Element.from_queue(element).data }
     end
 
     def clear(queue)

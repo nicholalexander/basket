@@ -5,6 +5,7 @@ require_relative "basket/backend_adapter/memory_backend"
 require_relative "basket/backend_adapter/redis_backend"
 require_relative "basket/batcher"
 require_relative "basket/configuration"
+require_relative "basket/element"
 require_relative "basket/error"
 require_relative "basket/handle_add"
 require_relative "basket/queue_collection"
@@ -23,6 +24,10 @@ module Basket
 
   def self.contents
     @queue_collection.data
+  end
+
+  def self.peek(queue)
+    queue_collection.read(queue)
   end
 
   def self.queue_collection
