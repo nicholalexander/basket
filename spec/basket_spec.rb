@@ -92,10 +92,8 @@ RSpec.describe Basket do
       Basket.add("DummyGroceryBasket", :milk)
       Basket.add("DummyStockBasket", {stock: "IBM", purchased_price: 13_036})
 
-      expect(Basket.contents).to eq({
-        "DummyGroceryBasket" => [:milk],
-        "DummyStockBasket" => [{purchased_price: 13_036, stock: "IBM"}]
-      })
+      expect(Basket.peek("DummyGroceryBasket")).to eq([:milk])
+      expect(Basket.peek("DummyStockBasket")).to eq([{purchased_price: 13_036, stock: "IBM"}])
     end
 
     it "raises a helpful error if the basket doesn't exist" do
@@ -263,17 +261,13 @@ RSpec.describe Basket do
     end
   end
 
-  describe ".contents" do
-    it "returns the values of all the queues" do
+  describe ".peek" do
+    it "returns the data for the given queue" do
       Basket.add("DummyGroceryBasket", "Onions")
       Basket.add("DummyStockBasket", {ticker: "TSLA", value: 0})
 
-      expect(Basket.contents).to eq(
-        "DummyGroceryBasket" => ["Onions"],
-        "DummyStockBasket" => [{ticker: "TSLA", value: 0}]
-      )
-      expect(Basket.contents).to be_an(Hash)
-      expect(Basket.contents.keys.length).to eq(2)
+      expect(Basket.peek("DummyGroceryBasket")).to eq(["Onions"])
+      expect(Basket.peek("DummyStockBasket")).to eq([{ticker: "TSLA", value: 0}])
     end
   end
 
