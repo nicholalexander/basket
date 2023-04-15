@@ -60,6 +60,51 @@ RSpec.describe Basket::QueueCollection do
     end
   end
 
+  describe "#search" do
+    let(:q) { Basket::QueueCollection.new }
+
+    before do
+      q.push("PlaylistBasket", {song: "Brown Study", artist: "Vansire"})
+      q.push("PlaylistBasket", {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"})
+      q.push("PlaylistBasket", {song: "Lavender", artist: "BadBadNotGood"})
+    end
+
+    it "returns and array of elements in the specified queue that match the query" do
+      query_proc = proc { |element| element.data[:artist] == "Vansire" }
+
+      data = q.search("PlaylistBasket", query_proc)
+
+      expect(data.size).to eq(1)
+      expect(data.is_a?(Array)).to be true
+      expect(data.size).to eq(1)
+      expect(data.first.is_a?(Basket::Element)).to be true
+    end
+
+    it "returns the correct element" do
+      query_proc = proc { |element| element.data[:artist] == "Vansire" }
+
+      data = q.search("PlaylistBasket", query_proc)
+
+      element = data.first
+
+      expect(element.id).to_not be_nil
+      expect(element.data).to eq({song: "Brown Study", artist: "Vansire"})
+    end
+
+    it "does not alter the queue" do
+      query_proc = proc { |element| element.data[:artist] == "Vansire" }
+
+      q_before_search = q.read("PlaylistBasket")
+
+      q.search("PlaylistBasket", query_proc)
+
+      q_after_search = q.read("PlaylistBasket")
+
+      expect(q_before_search).to eq(q_after_search)
+      expect(q.length("PlaylistBasket")).to eq(3)
+    end
+  end
+
   describe "#clear" do
     it "clears the specified queue" do
       q = Basket::QueueCollection.new

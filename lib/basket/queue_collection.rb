@@ -18,6 +18,11 @@ module Basket
       raw_queue.map { |element| Element.from_queue(element).data }
     end
 
+    def search(queue, query)
+      raw_search_results = @backend.search(queue, &query)
+      raw_search_results.map { |raw_search_result| Element.from_queue(raw_search_result) }
+    end
+
     def clear(queue)
       @backend.clear(queue)
     end
