@@ -79,8 +79,8 @@ RSpec.describe Basket::BackendAdapter::MemoryBackend do
         backend = described_class.new
 
         backend.push("egg_queue", robin_egg)
-        backend.push("egg_queue", blue_jay)
         backend.push("egg_queue", organic_chicken_egg)
+        backend.push("egg_queue", blue_jay)
         backend.push("egg_queue", supermarket_chicken_egg)
 
         results = backend.search("egg_queue") do |query|
