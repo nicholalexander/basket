@@ -11,6 +11,7 @@ SimpleCov.start
 require "basket"
 require "mocktail"
 require "mock_redis"
+require "pry"
 
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
 
