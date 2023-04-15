@@ -86,6 +86,7 @@ RSpec.describe Basket::BackendAdapter::MemoryBackend do
         results = backend.search("egg_queue") do |query|
           query.color == "blue"
         end
+
         expect(results.map(&:name)).to eq(["robin", "jay"])
       end
     end
