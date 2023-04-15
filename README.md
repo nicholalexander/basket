@@ -22,6 +22,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
     $ gem install basket
 
 ## Usage
+### Adding
 
 Add items to your basket as they come along.  They might come along quickly, or there might be a delay between them.  Regardless, you want to collect items into your basket before going and doing something with them.
 
@@ -33,6 +34,10 @@ end
 ```
 
 The item added to the basket can be any data you want!  If you are using the in memory Queue, it is fine to store Ruby objects, but if you have a different backend, must be JSON serializable via `to_json`.
+
+### Your basket
+
+When a basket has become full after you have added a bunch of things to it, it performs actions!  See below for the full definition of a basket.
 
 ```ruby
 class QuicheBasket
@@ -83,6 +88,27 @@ The callbacks are lifecycle callbacks on the existing batch.  `on_add` gives acc
 The `on_failure` use of `batch` of course may not have a full batch as the error could have been generated during `add` or `on_add`.  The `on_failure` callback also has access to an `error` variable which holds the error that was generated.  
 
 Defining `on_add`, `on_failure`, and `on_success` is optional. 
+
+### Search
+
+You may search through your basket, if for example, you need to see if you've accidentally collected a robin egg and not a chicken egg!
+
+```ruby
+search_results = Basket.search('QuicheBasket') do |query|
+  query.color == "blue"
+end
+```
+
+The block you pass will match against the objects in your basket.  If you have ruby objects in your basket, you can match against their properties just as if you were accessing them one at a time.  If you have json objects in your basket, you will be searching through a hash.
+
+The search results will be a fully qualified basket element which will contain an id attribute and a data attribute.  In the case of using the MemoryBackend, you might see something like this:
+
+```ruby
+# ...continued from above
+search_results.first  #=> #<Basket::Element:0x00000001075d9c80
+                      #   @data=#<Egg color="blue", size="smol">
+                      #   @id="5fe3df9e-4063-4b67-a08f-e36b847087c7">
+```
 
 ## Configuration
 
