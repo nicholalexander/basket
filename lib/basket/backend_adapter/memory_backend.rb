@@ -22,6 +22,10 @@ module Basket
         @data[queue]
       end
 
+      def search(queue, &block)
+        @data[queue].select { |raw_element| block.call(raw_element) }
+      end
+
       def clear(queue)
         @data[queue] = []
       end

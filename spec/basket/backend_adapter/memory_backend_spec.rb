@@ -41,6 +41,20 @@ RSpec.describe Basket::BackendAdapter::MemoryBackend do
     end
   end
 
+  describe "#search" do
+    it "returns all the elements that match the search query" do
+      backend = described_class.new
+      backend.push("test_queue", {a: 1})
+      backend.push("test_queue", {b: 2})
+
+      results = backend.search("test_queue") do |query|
+        query[:a] == 1
+      end
+
+      expect(results).to eq([{a: 1}])
+    end
+  end
+
   describe "#clear" do
     it "clears the given queue" do
       backend = described_class.new
