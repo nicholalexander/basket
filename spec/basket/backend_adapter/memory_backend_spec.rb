@@ -53,6 +53,42 @@ RSpec.describe Basket::BackendAdapter::MemoryBackend do
 
       expect(results).to eq([{a: 1}])
     end
+
+    context "when there are multiple matches" do
+      it "returns all of them" do
+        backend = described_class.new
+        backend.push("test_queue", {a: 1})
+        backend.push("test_queue", {b: 2})
+        backend.push("test_queue", {a: 1})
+
+        results = backend.search("test_queue") do |query|
+          query[:a] == 1
+        end
+
+        expect(results).to eq([{a: 1}, {a: 1}])
+      end
+    end
+
+    context "when the queue contains objects" do
+      it "selects the objects" do
+        robin_egg = OpenStruct.new(name: "robin", color: "blue")
+        organic_chicken_egg = OpenStruct.new(name: "chicken", color: "brown")
+        blue_jay = OpenStruct.new(name: "jay", color: "blue")
+        supermarket_chicken_egg = OpenStruct.new(name: "chicken", color: "white")
+
+        backend = described_class.new
+
+        backend.push("egg_queue", robin_egg)
+        backend.push("egg_queue", blue_jay)
+        backend.push("egg_queue", organic_chicken_egg)
+        backend.push("egg_queue", supermarket_chicken_egg)
+
+        results = backend.search("egg_queue") do |query|
+          query.color == "blue"
+        end
+        expect(results.map(&:name)).to eq(["robin", "jay"])
+      end
+    end
   end
 
   describe "#clear" do
