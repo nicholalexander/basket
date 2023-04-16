@@ -25,6 +25,10 @@ module Basket
         response
       end
 
+      def search(queue, &block)
+        deserialized_queue_data(queue).select { |raw_element| block.call(raw_element["data"]) }
+      end
+
       def push(queue, data)
         @client.lpush(queue, serialize_data(data))
       end

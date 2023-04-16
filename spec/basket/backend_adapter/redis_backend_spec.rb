@@ -13,6 +13,42 @@ RSpec.describe Basket::BackendAdapter::RedisBackend do
     end
   end
 
+  describe "#search" do
+    it "returns all the elements that match the search query" do
+      backend = described_class.new
+      backend.push("test_queue", Basket::Element.new({a: 1}))
+      backend.push("test_queue", Basket::Element.new({b: 2}))
+
+      results = backend.search("test_queue") do |element_data|
+        element_data["a"] == 1
+      end
+
+      expect(results).to be_a(Array)
+
+      result = results.first
+
+      expect(result).to be_a(Hash)
+      expect(result["data"]).to eq({"a" => 1})
+    end
+
+    context "when there are multiple matches" do
+      it "returns all of them" do
+        backend = described_class.new
+        backend.push("test_queue", Basket::Element.new({a: 1, c: 2}))
+        backend.push("test_queue", Basket::Element.new({b: 2}))
+        backend.push("test_queue", Basket::Element.new({a: 1, c: 3}))
+
+        results = backend.search("test_queue") do |element_data|
+          element_data["a"] == 1
+        end
+
+        expect(results.size).to eq(2)
+        expect(results[0]["data"]).to eq({"a" => 1, "c" => 2})
+        expect(results[1]["data"]).to eq({"a" => 1, "c" => 3})
+      end
+    end
+  end
+
   describe "#push" do
     it "pushes an item into the given queue" do
       result = described_class.new.push("test_queue", {"a" => 1})

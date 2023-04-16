@@ -19,7 +19,7 @@ module Basket
       @id = id
     end
 
-    def to_json
+    def to_json(*)
       {data: data, id: id}.to_json
     end
   end
