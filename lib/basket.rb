@@ -38,6 +38,10 @@ module Basket
     HandleAdd.call(queue, data)
   end
 
+  def self.search(queue, &query)
+    queue_collection.search(queue, query)
+  end
+
   def self.clear_all
     queue_collection.reset_backend
   end

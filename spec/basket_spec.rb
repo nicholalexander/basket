@@ -271,6 +271,37 @@ RSpec.describe Basket do
     end
   end
 
+  describe ".search" do
+    it "returns the data wrapped as Elements for a queue" do
+      onions = OpenStruct.new(food: "Onions", price: 1.99)
+      bananas = OpenStruct.new(food: "Bananas", price: 2.99)
+      apples = OpenStruct.new(food: "Apples", price: 0.99)
+
+      Basket.add("DummyGroceryBasket", onions)
+      Basket.add("DummyGroceryBasket", bananas)
+      Basket.add("DummyGroceryBasket", apples)
+
+      results = Basket.search("DummyGroceryBasket") do |element|
+        element.price < 2.00
+      end
+
+      expect(results).to be_a(Array)
+    end
+
+    context "when you search on an empty basket" do
+      it "raises a Basket::EmptyBasketError"
+    end
+
+    context "when you search on a basket that doesn't exist" do
+      it "raises a Basket::BasketNotFoundError"
+    end
+
+    context "when your search returns no results" do
+      # does it?
+      it "returns an empty array"
+    end
+  end
+
   describe ".configure" do
     it "configures the redis host" do
       Basket.configure do |config|
