@@ -44,28 +44,33 @@ RSpec.describe Basket::BackendAdapter::MemoryBackend do
   describe "#search" do
     it "returns all the elements that match the search query" do
       backend = described_class.new
-      backend.push("test_queue", {a: 1})
-      backend.push("test_queue", {b: 2})
+      backend.push("test_queue", Basket::Element.new({a: 1}))
+      backend.push("test_queue", Basket::Element.new({b: 2}))
 
       results = backend.search("test_queue") do |query|
         query[:a] == 1
       end
 
-      expect(results).to eq([{a: 1}])
+      expect(results).to be_a(Array)
+      expect(results.first).to be_an(Basket::Element)
+
+      result = results.first
+
+      expect(result.data).to eq({a: 1})
     end
 
     context "when there are multiple matches" do
       it "returns all of them" do
         backend = described_class.new
-        backend.push("test_queue", {a: 1})
-        backend.push("test_queue", {b: 2})
-        backend.push("test_queue", {a: 1})
+        backend.push("test_queue", Basket::Element.new({a: 1}))
+        backend.push("test_queue", Basket::Element.new({b: 2}))
+        backend.push("test_queue", Basket::Element.new({a: 1}))
 
         results = backend.search("test_queue") do |query|
           query[:a] == 1
         end
 
-        expect(results).to eq([{a: 1}, {a: 1}])
+        expect(results.map(&:data)).to eq([{a: 1}, {a: 1}])
       end
     end
 
@@ -78,16 +83,16 @@ RSpec.describe Basket::BackendAdapter::MemoryBackend do
 
         backend = described_class.new
 
-        backend.push("egg_queue", robin_egg)
-        backend.push("egg_queue", organic_chicken_egg)
-        backend.push("egg_queue", blue_jay)
-        backend.push("egg_queue", supermarket_chicken_egg)
+        backend.push("egg_queue", Basket::Element.new(robin_egg))
+        backend.push("egg_queue", Basket::Element.new(organic_chicken_egg))
+        backend.push("egg_queue", Basket::Element.new(blue_jay))
+        backend.push("egg_queue", Basket::Element.new(supermarket_chicken_egg))
 
         results = backend.search("egg_queue") do |query|
           query.color == "blue"
         end
 
-        expect(results.map(&:name)).to eq(["robin", "jay"])
+        expect(results.map(&:data).map(&:name)).to eq(["robin", "jay"])
       end
     end
   end

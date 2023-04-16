@@ -70,29 +70,29 @@ RSpec.describe Basket::QueueCollection do
     end
 
     it "returns and array of elements in the specified queue that match the query" do
-      query_proc = proc { |element| element.data[:artist] == "Vansire" }
+      query_proc = proc { |element| element[:artist] == "Vansire" }
 
-      data = q.search("PlaylistBasket", query_proc)
+      results = q.search("PlaylistBasket", query_proc)
 
-      expect(data.size).to eq(1)
-      expect(data.is_a?(Array)).to be true
-      expect(data.size).to eq(1)
-      expect(data.first.is_a?(Basket::Element)).to be true
+      expect(results.size).to eq(1)
+
+      expect(results).to be_a(Array)
+      expect(results.first).to be_a(Basket::Element)
     end
 
     it "returns the correct element" do
-      query_proc = proc { |element| element.data[:artist] == "Vansire" }
+      query_proc = proc { |element| element[:artist] == "Vansire" }
 
-      data = q.search("PlaylistBasket", query_proc)
+      results = q.search("PlaylistBasket", query_proc)
 
-      element = data.first
+      element = results.first
 
       expect(element.id).to_not be_nil
       expect(element.data).to eq({song: "Brown Study", artist: "Vansire"})
     end
 
     it "does not alter the queue" do
-      query_proc = proc { |element| element.data[:artist] == "Vansire" }
+      query_proc = proc { |element| element[:artist] == "Vansire" }
 
       q_before_search = q.read("PlaylistBasket")
 
