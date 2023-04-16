@@ -94,12 +94,18 @@ Defining `on_add`, `on_failure`, and `on_success` is optional.
 You may search through your basket, if for example, you need to see if you've accidentally collected a robin egg and not a chicken egg!
 
 ```ruby
-search_results = Basket.search('QuicheBasket') do |query|
-  query.color == "blue"
+search_results = Basket.search("QuicheBasket") do |egg|
+  egg.color == "blue"
 end
 ```
 
-The block you pass will match against the objects in your basket.  If you have ruby objects in your basket, you can match against their properties just as if you were accessing them one at a time.  If you have json objects in your basket, you will be searching through a hash.
+The block you pass will match against the objects in your basket.  If you have ruby objects in your basket, you can match against their properties just as if you were accessing them one at a time.  If you have json objects in your basket, you will be searching through a hash thusly:
+
+```ruby
+search_results = Basket.search("PlaylistBasket") do |song|
+  song[:artist] == "Vansire"
+end
+```
 
 The search results will be a fully qualified basket element which will contain an id attribute and a data attribute.  In the case of using the MemoryBackend, you might see something like this:
 
