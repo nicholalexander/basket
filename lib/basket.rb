@@ -11,6 +11,8 @@ require_relative "basket/handle_add"
 require_relative "basket/queue_collection"
 require_relative "basket/version"
 
+require "json"
+
 module Basket
   class Error < StandardError; end
 

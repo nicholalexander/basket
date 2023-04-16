@@ -1,5 +1,4 @@
 require "redis-namespace"
-require "json"
 
 module Basket
   class BackendAdapter
