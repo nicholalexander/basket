@@ -28,6 +28,14 @@ module Basket
         deserialized_queue_data(queue).select { |raw_element| block.call(raw_element["data"]) }
       end
 
+      def delete(queue, element_id)
+        element = read(queue).find { |raw_element| raw_element["id"] == element_id }
+
+        @client.lrem(queue, 1, element)
+
+        element
+      end
+
       def push(queue, data)
         @client.lpush(queue, serialize_data(data))
       end
