@@ -29,9 +29,9 @@ module Basket
       end
 
       def delete(queue, element_id)
-        element = read(queue).find { |raw_element| raw_element["id"] == element_id }
+        element = deserialized_queue_data(queue).find { |raw_element| raw_element["id"] == element_id }
 
-        @client.lrem(queue, 1, element)
+        @client.lrem(queue, 1, element.to_json)
 
         element
       end

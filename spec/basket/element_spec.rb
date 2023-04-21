@@ -8,30 +8,21 @@ RSpec.describe Basket::Element do
       end
     end
 
-    context "when the queue item is valid json element" do
-      context "and the json is a valid element" do
+      context "when the queue item is a valid hash" do
+      
         it "returns a parsed Element instance" do
           element = Basket::Element.new("foo")
-          expect(Basket::Element.from_queue(element.to_json)).to eq(element)
+          expect(Basket::Element.from_queue(JSON.parse(element.to_json))).to eq(element)
         end
       end
 
-      context "and the json isn't a valid element" do
-        it "returns a parsed Element instance" do
-          element = "{\"foo\":\"bar\"}"
+      context "when the queue element is an unsupported type" do
+        it "raises an error" do
+          element = Array.new
 
-          expect { Basket::Element.from_queue(element) }.to raise_error(Basket::Element::InvalidElement, "both data and id must be present")
+          expect { Basket::Element.from_queue(element) }.to raise_error(Basket::Element::InvalidElement, "element must be a hash or a Basket::Element")
         end
       end
-    end
-
-    context "when the queue item isn't a valid json object" do
-      it "raises an error" do
-        element = "{invalid_json: foo}"
-
-        expect { Basket::Element.from_queue(element) }.to raise_error(Basket::Element::InvalidElement, /failed to parse element to json:/)
-      end
-    end
   end
 
   describe "#to_json" do

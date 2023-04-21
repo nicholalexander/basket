@@ -9,12 +9,11 @@ module Basket
     def self.from_queue(element)
       if element.is_a?(Element)
         element
+      elsif element.is_a?(Hash)
+        new(element["data"], element["id"])
       else
-        parsed_element = JSON.parse(element)
-        new(parsed_element["data"], parsed_element["id"])
+        raise InvalidElement, "element must be a hash or a Basket::Element"
       end
-    rescue JSON::ParserError => e
-      raise InvalidElement, "failed to parse element to json: #{e.message} "
     end
 
     def initialize(data, id = SecureRandom.uuid)

@@ -5,10 +5,9 @@ RSpec.describe Basket::QueueCollection do
 
       q.push("PizzaBasket", "cheese")
 
-      queue_element = q.data["PizzaBasket"].first
+      queue_element = q.read("PizzaBasket").first
 
-      expect(queue_element.data).to eq("cheese")
-      expect(queue_element.id).to_not be_nil
+      expect(queue_element).to eq("cheese")
     end
 
     it "returns the length of the queue" do
