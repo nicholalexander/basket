@@ -23,6 +23,11 @@ module Basket
       raw_search_results.map { |raw_search_result| Element.from_queue(raw_search_result) }
     end
 
+    def delete(queue, id)
+      raw_deleted_element = @backend.delete(queue, id)
+      Element.from_queue(raw_deleted_element).data
+    end
+
     def clear(queue)
       @backend.clear(queue)
     end

@@ -76,6 +76,11 @@ class BatchBugBasket
   end
 end
 
+class DummySearchAndDestroyBasket
+  include Basket::Batcher
+  basket_options size: 10
+end
+
 RSpec.describe Basket do
   it "has a version number" do
     expect(Basket::VERSION).not_to be nil
@@ -277,11 +282,11 @@ RSpec.describe Basket do
       bananas = OpenStruct.new(food: "Bananas", price: 2.99)
       apples = OpenStruct.new(food: "Apples", price: 0.99)
 
-      Basket.add("DummyGroceryBasket", onions)
-      Basket.add("DummyGroceryBasket", bananas)
-      Basket.add("DummyGroceryBasket", apples)
+      Basket.add("DummySearchAndDestroyBasket", onions)
+      Basket.add("DummySearchAndDestroyBasket", bananas)
+      Basket.add("DummySearchAndDestroyBasket", apples)
 
-      results = Basket.search("DummyGroceryBasket") do |element|
+      results = Basket.search("DummySearchAndDestroyBasket") do |element|
         element.price < 2.00
       end
 
@@ -299,6 +304,34 @@ RSpec.describe Basket do
     context "when your search returns no results" do
       # does it?
       it "returns an empty array"
+    end
+  end
+
+  describe ".delete" do
+    it "deletes the data for the given queue" do
+      onions = OpenStruct.new(food: "Onions", price: 1.99)
+      bananas = OpenStruct.new(food: "Bananas", price: 2.99)
+      apples = OpenStruct.new(food: "Apples", price: 0.99)
+
+      Basket.add("DummySearchAndDestroyBasket", onions)
+      Basket.add("DummySearchAndDestroyBasket", bananas)
+      Basket.add("DummySearchAndDestroyBasket", apples)
+
+      results = Basket.search("DummySearchAndDestroyBasket") do |element|
+        element.food == "Onions"
+      end
+
+      element_to_delete_id = results.first.id
+
+      deleted_item = Basket.delete("DummySearchAndDestroyBasket", element_to_delete_id)
+
+      expect(deleted_item).to eq(onions)
+    end
+
+    it "returns the deleted object"
+
+    context "when the id does not exist" do
+      it "raise a Basket::ElementNotFoundError"
     end
   end
 

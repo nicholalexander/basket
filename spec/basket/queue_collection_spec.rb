@@ -105,6 +105,25 @@ RSpec.describe Basket::QueueCollection do
     end
   end
 
+  describe "#delete" do
+    let(:q) { Basket::QueueCollection.new }
+
+    it "deletes the specified element from the specified queue" do
+      q.push("PlaylistBasket", {song: "Brown Study", artist: "Vansire"})
+      q.push("PlaylistBasket", {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"})
+
+      query_proc = proc { |element| element[:artist] == "Vansire" }
+
+      element_to_delete = q.search("PlaylistBasket", query_proc).first
+
+      deleted_element = q.delete("PlaylistBasket", element_to_delete.id)
+
+      expect(q.length("PlaylistBasket")).to eq(1)
+      expect(element_to_delete.data).to eq(deleted_element)
+      expect(q.read("PlaylistBasket")).to eq([{song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"}])
+    end
+  end
+
   describe "#clear" do
     it "clears the specified queue" do
       q = Basket::QueueCollection.new
