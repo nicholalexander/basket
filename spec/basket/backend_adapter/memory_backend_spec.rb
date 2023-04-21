@@ -97,6 +97,24 @@ RSpec.describe Basket::BackendAdapter::MemoryBackend do
     end
   end
 
+  describe "#delete" do
+    it "deletes the given element from the given queue" do
+      element_to_keep = Basket::Element.new({b: 2})
+      element_to_delete = Basket::Element.new({a: 1})
+      id = element_to_delete.id
+
+      backend = described_class.new
+
+      backend.push("test_queue", element_to_keep)
+      backend.push("test_queue", element_to_delete)
+
+      result = backend.delete("test_queue", id)
+
+      expect(result).to eq(element_to_delete)
+      expect(backend.read("test_queue")).to eq([element_to_keep])
+    end
+  end
+
   describe "#clear" do
     it "clears the given queue" do
       backend = described_class.new

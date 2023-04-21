@@ -44,6 +44,10 @@ module Basket
     queue_collection.search(queue, query)
   end
 
+  def self.delete(queue, id)
+    queue_collection.delete(queue, id)
+  end
+
   def self.clear_all
     queue_collection.reset_backend
   end

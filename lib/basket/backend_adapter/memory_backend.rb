@@ -23,7 +23,12 @@ module Basket
       end
 
       def search(queue, &block)
-        @data[queue].select { |raw_element| block.call(raw_element.data) }
+        @data[queue].select { |element| block.call(element.data) }
+      end
+
+      def delete(queue, id)
+        index_of_element_to_delete = @data[queue].index { |element| element.id == id}
+        @data[queue].delete_at(index_of_element_to_delete)
       end
 
       def clear(queue)
