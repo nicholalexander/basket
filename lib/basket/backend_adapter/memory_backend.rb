@@ -27,7 +27,7 @@ module Basket
       end
 
       def delete(queue, id)
-        index_of_element_to_delete = @data[queue].index { |element| element.id == id}
+        index_of_element_to_delete = @data[queue].index { |element| element.id == id }
         @data[queue].delete_at(index_of_element_to_delete)
       end
 
