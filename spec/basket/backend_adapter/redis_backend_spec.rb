@@ -62,6 +62,21 @@ RSpec.describe Basket::BackendAdapter::RedisBackend do
 
       expect(result).to eq(JSON.parse(element_2.to_json))
     end
+
+    context "when the id does not correspond to an element" do
+      it "returns nil" do
+        backend = described_class.new
+        element_1 = Basket::Element.new({a: 1})
+        element_2 = Basket::Element.new({b: 2})
+
+        backend.push("test_queue", element_1)
+        backend.push("test_queue", element_2)
+
+        result = backend.remove("test_queue", "invalid_id")
+
+        expect(result).to be_nil
+      end
+    end
   end
 
   describe "#push" do
