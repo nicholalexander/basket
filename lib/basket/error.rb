@@ -4,4 +4,6 @@ module Basket
   class BasketNotFoundError < Error; end
 
   class EmptyBasketError < Error; end
+
+  class ElementNotFoundError < Error; end
 end
