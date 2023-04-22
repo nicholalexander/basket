@@ -272,7 +272,12 @@ RSpec.describe Basket do
     end
 
     context "when the id does not exist" do
-      it "raise a Basket::ElementNotFoundError"
+      it "raise a Basket::ElementNotFoundError" do
+        onions = OpenStruct.new(food: "Onions", price: 1.99)
+        Basket.add("DummySearchAndDestroyBasket", onions)
+        element_to_delete_id = "non_existent_id"
+        expect { Basket.remove("DummySearchAndDestroyBasket", element_to_delete_id) }.to raise_error(Basket::ElementNotFoundError)
+      end
     end
   end
 

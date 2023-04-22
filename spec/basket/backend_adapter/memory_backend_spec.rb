@@ -113,6 +113,17 @@ RSpec.describe Basket::BackendAdapter::MemoryBackend do
       expect(result).to eq(element_to_delete)
       expect(backend.read("test_queue")).to eq([element_to_keep])
     end
+
+    context "when the id does not correspond to an element" do
+      it "returns nil" do
+        element_to_keep = Basket::Element.new({bing: :boop})
+        backend = described_class.new
+        backend.push("test_queue", element_to_keep)
+
+        result = backend.remove("test_queue", "not an id")
+        expect(result).to be_nil
+      end
+    end
   end
 
   describe "#clear" do

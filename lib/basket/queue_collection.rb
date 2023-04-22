@@ -28,6 +28,7 @@ module Basket
 
     def remove(queue, id)
       raw_removed_element = @backend.remove(queue, id)
+      check_for_raw_removed_element(raw_removed_element)
       Element.from_queue(raw_removed_element).data
     end
 
@@ -51,6 +52,10 @@ module Basket
 
     def check_for_zero_length(queue)
       raise Basket::EmptyBasketError, "The basket #{queue} is empty." if length(queue).zero?
+    end
+
+    def check_for_raw_removed_element(raw_removed_element)
+      raise Basket::ElementNotFoundError if raw_removed_element.nil?
     end
   end
 end
