@@ -81,6 +81,14 @@ class DummySearchAndDestroyBasket
   basket_options size: 10
 end
 
+class DummyEmptyBasket
+  include Basket::Batcher
+  basket_options size: 1
+
+  def perform
+  end
+end
+
 RSpec.describe Basket do
   it "has a version number" do
     expect(Basket::VERSION).not_to be nil
@@ -294,7 +302,14 @@ RSpec.describe Basket do
     end
 
     context "when you search on an empty basket" do
-      it "raises a Basket::EmptyBasketError"
+      it "raises a Basket::EmptyBasketError" do
+        Basket.add("DummyEmptyBasket", "")
+        expect(Basket.peek("DummyEmptyBasket")).to eq([])
+
+        expect {
+          Basket.search("DummyEmptyBasket") { |element| element.blip = "bloop" }
+        }.to raise_error(Basket::EmptyBasketError, /The basket DummyEmptyBasket is empty./)
+      end
     end
 
     context "when you search on a basket that doesn't exist" do

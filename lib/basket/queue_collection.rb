@@ -19,6 +19,7 @@ module Basket
     end
 
     def search(queue, query)
+      raise Basket::EmptyBasketError, "The basket #{queue} is empty." if length(queue).zero?
       raw_search_results = @backend.search(queue, &query)
       raw_search_results.map { |raw_search_result| Element.from_queue(raw_search_result) }
     end
