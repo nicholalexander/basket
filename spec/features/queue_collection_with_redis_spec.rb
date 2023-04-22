@@ -60,6 +60,24 @@ RSpec.describe "Queue collection with Redis" do
       expect(results).to be_a(Array)
       expect(results.first).to be_a(Basket::Element)
     end
+
+    context "when the query does not match any elements" do
+      it "returns an empty array" do
+        query_proc = proc { |element| element["artist"] == "Bob Dylan" }
+
+        results = q.search("PlaylistBasket", query_proc)
+
+        expect(results).to be_empty
+      end
+    end
+
+    context "when the basket does not exist" do
+      it "raises basket not found error" do
+        query_proc = proc { |element| element["artist"] == "Bob Dylan" }
+
+        expect { q.search("NonexistentBasket", query_proc) }.to raise_error(Basket::BasketNotFoundError)
+      end
+    end
   end
 
   describe "#remove" do
@@ -78,6 +96,12 @@ RSpec.describe "Queue collection with Redis" do
       expect(q.length("PlaylistBasket")).to eq(1)
       expect(element_to_delete.data).to eq(deleted_element)
       expect(q.read("PlaylistBasket")).to eq([{"song" => "Sacred Feathers", "artist" => "Parra for Cuva, Senoy"}])
+    end
+
+    context "when the id does not exist" do
+      it "raises element not found error" do
+        expect { q.remove("PlaylistBasket", "not_an_id") }.to raise_error(Basket::ElementNotFoundError)
+      end
     end
   end
 end
