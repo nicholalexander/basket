@@ -5,6 +5,7 @@ RSpec.describe Basket::QueueCollection do
       example.run
     end
 
+    # reset to default.
     Basket.config.backend = :memory
   end
 
