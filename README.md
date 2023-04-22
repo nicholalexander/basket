@@ -116,6 +116,24 @@ search_results.first  #=> #<Basket::Element:0x00000001075d9c80
                       #   @id="5fe3df9e-4063-4b67-a08f-e36b847087c7">
 ```
 
+You'll note that the result of a search is an array of basket elements.  An element consists of the data that you put in and ID.  What is the id for?  Glad you asked.
+
+### Remove
+
+You can also remove something from your basket.  Perhaps it is deleted in the database and no longer contains a valid reference to data?  Perhaps you found that robin egg and don't actually want to use it to make a quiche, because who would?  Either way, removing the element is easy!
+
+```ruby
+# ...continued from above
+element_id_to_remove = search_results.first
+removed_egg = Basket.remove('Quiche', element_id_to_remove)
+removed_egg #=> #<Egg color="blue", size="smol">
+```
+
+Voila!
+
+### A Note of Warning
+
+Searching for and removing elements from your basket is an inherently tricky process as your basket may fill up and execute the `perform` action while searching and removing.
 ## Configuration
 
 In an initializer, or somewhere equally appropriate, you might put something like this:
