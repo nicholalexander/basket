@@ -1,4 +1,13 @@
 RSpec.describe Basket::QueueCollection do
+  around(:each) do |example|
+    [:memory, :redis].each do |backend|
+      Basket.config.backend = backend
+      example.run
+    end
+
+    Basket.config.backend = :memory
+  end
+
   describe "#push" do
     it "adds an element to the specified queue" do
       q = Basket::QueueCollection.new
@@ -24,9 +33,9 @@ RSpec.describe Basket::QueueCollection do
     it "returns the length of the specified queue" do
       q = Basket::QueueCollection.new
 
-      q.push("RockBasket", {color: :white, value_in_cents: 300})
-      q.push("RockBasket", {color: :orange, value_in_cents: 600})
-      q.push("RockBasket", {color: :gray, value_incents: 895, for_sale: false})
+      q.push("RockBasket", {"color" => :white, "value_in_cents" => 300})
+      q.push("RockBasket", {"color" => :orange, "value_in_cents" => 600})
+      q.push("RockBasket", {"color" => :gray, "value_in_cents" => 895, "for_sale" => false})
 
       expect(q.length("RockBasket")).to eq(3)
     end
@@ -36,22 +45,22 @@ RSpec.describe Basket::QueueCollection do
     it "returns the elements in the specified queue" do
       q = Basket::QueueCollection.new
 
-      q.push("PlaylistBasket", {song: "Brown Study", artist: "Vansire"})
-      q.push("PlaylistBasket", {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"})
+      q.push("PlaylistBasket", {"song" => "Brown Study", "artist" => "Vansire"})
+      q.push("PlaylistBasket", {"song" => "Sacred Feathers", "artist" => "Parra for Cuva, Senoy"})
 
       data = q.read("PlaylistBasket")
 
       expect(data.size).to eq(2)
       expect(data.is_a?(Enumerable)).to be true
-      expect(data).to match_array([{song: "Brown Study", artist: "Vansire"},
-        {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"}])
+      expect(data).to match_array([{"song" => "Brown Study", "artist" => "Vansire"},
+        {"song" => "Sacred Feathers", "artist" => "Parra for Cuva, Senoy"}])
     end
 
     it "preserves the data in the queue" do
       q = Basket::QueueCollection.new
 
-      q.push("PlaylistBasket", {song: "Brown Study", artist: "Vansire"})
-      q.push("PlaylistBasket", {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"})
+      q.push("PlaylistBasket", {"song" => "Brown Study", "artist" => "Vansire"})
+      q.push("PlaylistBasket", {"song" => "Sacred Feathers", "artist" => "Parra for Cuva, Senoy"})
 
       q.read("PlaylistBasket")
 
@@ -60,16 +69,14 @@ RSpec.describe Basket::QueueCollection do
   end
 
   describe "#search" do
-    let(:q) { Basket::QueueCollection.new }
-
-    before do
-      q.push("PlaylistBasket", {song: "Brown Study", artist: "Vansire"})
-      q.push("PlaylistBasket", {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"})
-      q.push("PlaylistBasket", {song: "Lavender", artist: "BadBadNotGood"})
-    end
-
     it "returns and array of elements in the specified queue that match the query" do
-      query_proc = proc { |element| element[:artist] == "Vansire" }
+      q = Basket::QueueCollection.new
+
+      q.push("PlaylistBasket", {"song" => "Brown Study", "artist" => "Vansire"})
+      q.push("PlaylistBasket", {"song" => "Sacred Feathers", "artist" => "Parra for Cuva, Senoy"})
+      q.push("PlaylistBasket", {"song" => "Lavender", "artist" => "BadBadNotGood"})
+
+      query_proc = proc { |element| element["artist"] == "Vansire" }
 
       results = q.search("PlaylistBasket", query_proc)
 
@@ -80,18 +87,30 @@ RSpec.describe Basket::QueueCollection do
     end
 
     it "returns the correct element" do
-      query_proc = proc { |element| element[:artist] == "Vansire" }
+      q = Basket::QueueCollection.new
+
+      q.push("PlaylistBasket", {"song" => "Brown Study", "artist" => "Vansire"})
+      q.push("PlaylistBasket", {"song" => "Sacred Feathers", "artist" => "Parra for Cuva, Senoy"})
+      q.push("PlaylistBasket", {"song" => "Lavender", "artist" => "BadBadNotGood"})
+
+      query_proc = proc { |element| element["artist"] == "Vansire" }
 
       results = q.search("PlaylistBasket", query_proc)
 
       element = results.first
 
       expect(element.id).to_not be_nil
-      expect(element.data).to eq({song: "Brown Study", artist: "Vansire"})
+      expect(element.data).to eq({"song" => "Brown Study", "artist" => "Vansire"})
     end
 
     it "does not alter the queue" do
-      query_proc = proc { |element| element[:artist] == "Vansire" }
+      q = Basket::QueueCollection.new
+
+      q.push("PlaylistBasket", {"song" => "Brown Study", "artist" => "Vansire"})
+      q.push("PlaylistBasket", {"song" => "Sacred Feathers", "artist" => "Parra for Cuva, Senoy"})
+      q.push("PlaylistBasket", {"song" => "Lavender", "artist" => "BadBadNotGood"})
+
+      query_proc = proc { |element| element["artist"] == "Vansire" }
 
       q_before_search = q.read("PlaylistBasket")
 
@@ -105,13 +124,13 @@ RSpec.describe Basket::QueueCollection do
   end
 
   describe "#remove" do
-    let(:q) { Basket::QueueCollection.new }
-
     it "removes the specified element from the specified queue" do
-      q.push("PlaylistBasket", {song: "Brown Study", artist: "Vansire"})
-      q.push("PlaylistBasket", {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"})
+      q = Basket::QueueCollection.new
 
-      query_proc = proc { |element| element[:artist] == "Vansire" }
+      q.push("PlaylistBasket", {"song" => "Brown Study", "artist" => "Vansire"})
+      q.push("PlaylistBasket", {"song" => "Sacred Feathers", "artist" => "Parra for Cuva, Senoy"})
+
+      query_proc = proc { |element| element["artist"] == "Vansire" }
 
       element_to_delete = q.search("PlaylistBasket", query_proc).first
 
@@ -119,7 +138,7 @@ RSpec.describe Basket::QueueCollection do
 
       expect(q.length("PlaylistBasket")).to eq(1)
       expect(element_to_delete.data).to eq(deleted_element)
-      expect(q.read("PlaylistBasket")).to eq([{song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"}])
+      expect(q.read("PlaylistBasket")).to eq([{"song" => "Sacred Feathers", "artist" => "Parra for Cuva, Senoy"}])
     end
   end
 
@@ -127,8 +146,8 @@ RSpec.describe Basket::QueueCollection do
     it "clears the specified queue" do
       q = Basket::QueueCollection.new
 
-      q.push("DummyStockBasket", {symbol: "AAPL", price: 100.00})
-      q.push("DummyStockBasket", {symbol: "GOOG", price: 200.00})
+      q.push("DummyStockBasket", {"symbol" => "AAPL", "price" => 100.00})
+      q.push("DummyStockBasket", {"symbol" => "GOOG", "price" => 200.00})
 
       q.clear("DummyStockBasket")
 
