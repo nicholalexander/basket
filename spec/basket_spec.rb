@@ -236,8 +236,17 @@ RSpec.describe Basket do
     end
 
     context "when your search returns no results" do
-      # does it?
-      it "returns an empty array"
+      it "returns an empty array" do
+        Basket.add("PlaylistBasket", "The Beatles")
+        Basket.add("PlaylistBasket", "The Rolling Stones")
+        Basket.add("PlaylistBasket", "The Who")
+
+        results = Basket.search("PlaylistBasket") do |element|
+          element == "The Doors"
+        end
+
+        expect(results).to eq([])
+      end
     end
   end
 
