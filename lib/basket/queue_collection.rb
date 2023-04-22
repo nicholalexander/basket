@@ -14,12 +14,14 @@ module Basket
     end
 
     def read(queue)
+      check_for_basket(queue)
       raw_queue = @backend.read(queue)
       raw_queue.map { |element| Element.from_queue(element).data }
     end
 
     def search(queue, query)
-      raise Basket::EmptyBasketError, "The basket #{queue} is empty." if length(queue).zero?
+      check_for_basket(queue)
+      check_for_zero_length(queue)
       raw_search_results = @backend.search(queue, &query)
       raw_search_results.map { |raw_search_result| Element.from_queue(raw_search_result) }
     end
@@ -39,6 +41,16 @@ module Basket
 
     def reset_backend
       @backend = Basket.config.backend.new
+    end
+
+    private
+
+    def check_for_basket(queue)
+      raise Basket::BasketNotFoundError unless Object.const_defined?(queue)
+    end
+
+    def check_for_zero_length(queue)
+      raise Basket::EmptyBasketError, "The basket #{queue} is empty." if length(queue).zero?
     end
   end
 end

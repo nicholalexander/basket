@@ -127,12 +127,12 @@ RSpec.describe Basket::QueueCollection do
     it "clears the specified queue" do
       q = Basket::QueueCollection.new
 
-      q.push("StockBasket", {symbol: "AAPL", price: 100.00})
-      q.push("StockBasket", {symbol: "GOOG", price: 200.00})
+      q.push("DummyStockBasket", {symbol: "AAPL", price: 100.00})
+      q.push("DummyStockBasket", {symbol: "GOOG", price: 200.00})
 
-      q.clear("StockBasket")
+      q.clear("DummyStockBasket")
 
-      expect(q.read("StockBasket")).to eq([])
+      expect(q.read("DummyStockBasket")).to eq([])
     end
   end
 end
