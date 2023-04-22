@@ -328,8 +328,6 @@ RSpec.describe Basket do
       expect(deleted_item).to eq(onions)
     end
 
-    it "returns the deleted object"
-
     context "when the id does not exist" do
       it "raise a Basket::ElementNotFoundError"
     end
