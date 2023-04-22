@@ -23,9 +23,9 @@ module Basket
       raw_search_results.map { |raw_search_result| Element.from_queue(raw_search_result) }
     end
 
-    def delete(queue, id)
-      raw_deleted_element = @backend.delete(queue, id)
-      Element.from_queue(raw_deleted_element).data
+    def remove(queue, id)
+      raw_removed_element = @backend.remove(queue, id)
+      Element.from_queue(raw_removed_element).data
     end
 
     def clear(queue)

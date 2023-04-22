@@ -62,10 +62,10 @@ RSpec.describe "Queue collection with Redis" do
     end
   end
 
-  describe "#delete" do
+  describe "#remove" do
     let(:q) { Basket::QueueCollection.new(backend) }
 
-    it "deletes the specified element from the specified queue" do
+    it "removes the specified element from the specified queue" do
       q.push("PlaylistBasket", {song: "Brown Study", artist: "Vansire"})
       q.push("PlaylistBasket", {song: "Sacred Feathers", artist: "Parra for Cuva, Senoy"})
 
@@ -73,7 +73,7 @@ RSpec.describe "Queue collection with Redis" do
 
       element_to_delete = q.search("PlaylistBasket", query_proc).first
 
-      deleted_element = q.delete("PlaylistBasket", element_to_delete.id)
+      deleted_element = q.remove("PlaylistBasket", element_to_delete.id)
 
       expect(q.length("PlaylistBasket")).to eq(1)
       expect(element_to_delete.data).to eq(deleted_element)

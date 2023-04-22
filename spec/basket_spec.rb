@@ -307,8 +307,8 @@ RSpec.describe Basket do
     end
   end
 
-  describe ".delete" do
-    it "deletes the data for the given queue" do
+  describe ".remove" do
+    it "removes the data from the given queue" do
       onions = OpenStruct.new(food: "Onions", price: 1.99)
       bananas = OpenStruct.new(food: "Bananas", price: 2.99)
       apples = OpenStruct.new(food: "Apples", price: 0.99)
@@ -323,7 +323,7 @@ RSpec.describe Basket do
 
       element_to_delete_id = results.first.id
 
-      deleted_item = Basket.delete("DummySearchAndDestroyBasket", element_to_delete_id)
+      deleted_item = Basket.remove("DummySearchAndDestroyBasket", element_to_delete_id)
 
       expect(deleted_item).to eq(onions)
     end
