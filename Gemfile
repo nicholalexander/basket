@@ -14,4 +14,4 @@ gem "rake", "~> 13.0"
 gem "rspec", "~> 3.0"
 gem "simplecov", require: false, group: :test
 gem "simplecov-json", require: false, group: :test
-gem "standard", "~> 1.27"
+gem "standard", "~> 1.28"
