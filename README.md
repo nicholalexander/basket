@@ -103,7 +103,7 @@ The block you pass will match against the objects in your basket.  If you have r
 
 ```ruby
 search_results = Basket.search("PlaylistBasket") do |song|
-  song[:artist] == "Vansire"
+  song["artist"] == "Vansire"
 end
 ```
 
