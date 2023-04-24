@@ -186,3 +186,7 @@ Everyone interacting in the Basket project's codebases, issue trackers, chat roo
 
 This project has been a fun and educational use of Growth Time at [Test Double](https://testdouble.com/) where consultants are given 4hrs per week to grow their skills and work on projects that further the mission of building software, better.
 
+## Authors
+
+* [Nichol Alexander](https://github.com/nicholalexander/)
+* [Alec Clarke](https://github.com/alecclarke)
