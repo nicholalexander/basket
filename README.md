@@ -160,6 +160,12 @@ Basket.configure do |config|
   config.redis_url = "redis://:p4ssw0rd@10.0.1.1:6380/15"
 end
 ```
+
+## Gotcha!
+
+### `on_failure`
+
+When you define your own `on_failure` method on your basket class, you may forget to re-raise your error.  This is behavior in the default implementation but if you are redefining the method, it may, of course, change.  If you are swallowing the error that surfaces through `on_failure` it may make it difficult to determine exactly what is happening with the gem or your application.
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

@@ -10,7 +10,7 @@ RSpec.describe Basket do
     allow($stdout).to receive(:puts)
   end
 
-  describe "#add" do
+  describe ".add" do
     it "allows you to track multiple baskets" do
       Basket.add("DummyGroceryBasket", :milk)
       Basket.add("DummyStockBasket", {stock: "IBM", purchased_price: 13_036})
@@ -26,7 +26,7 @@ RSpec.describe Basket do
     end
   end
 
-  describe "#perform" do
+  describe ".perform" do
     it "will perform an action when the basket is full" do
       stubbed_baskets = Mocktail.of_next(DummyGroceryBasket, count: 2)
       performable_basket = stubbed_baskets[1]
@@ -64,7 +64,7 @@ RSpec.describe Basket do
     end
   end
 
-  describe "#on_add" do
+  describe ".on_add" do
     it "is called each time an element is added" do
       stubbed_baskets = Mocktail.of_next(DummyStockBasket, count: 2)
 
@@ -97,7 +97,7 @@ RSpec.describe Basket do
     end
   end
 
-  describe "#on_success" do
+  describe ".on_success" do
     it "is called after perform" do
       stubbed_baskets = Mocktail.of_next(DummyGroceryBasket, count: 2)
       performable_basket = stubbed_baskets[1]
@@ -136,7 +136,7 @@ RSpec.describe Basket do
     end
   end
 
-  describe "#on_failure" do
+  describe ".on_failure" do
     it "is called if perform raises an error" do
       stubbed_basket = DummyFireworksBasket.new
       allow(DummyFireworksBasket).to receive(:new).and_return(stubbed_basket)
