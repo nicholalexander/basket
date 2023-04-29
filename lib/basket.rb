@@ -25,7 +25,7 @@ module Basket
   end
 
   def self.contents
-    @queue_collection.data
+    queue_collection.data
   end
 
   def self.peek(queue)
@@ -50,5 +50,6 @@ module Basket
 
   def self.clear_all
     queue_collection.reset_backend
+    @queue_collection = nil
   end
 end

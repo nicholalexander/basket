@@ -6,7 +6,6 @@ RSpec.describe Basket do
   end
 
   before do
-    Basket.config
     Basket.clear_all
     allow($stdout).to receive(:puts)
   end
@@ -53,6 +52,15 @@ RSpec.describe Basket do
       expect($stdout).to have_received(:puts).with({price: 1234, ticker: :ibm})
       expect($stdout).to have_received(:puts).with({price: 2345, ticker: :apl})
       expect($stdout).to have_received(:puts).with({price: 345, ticker: :asdf})
+    end
+
+    context "when perform is not defined" do
+      it "raises an error" do
+        expect do
+          Basket.add("NonPerformantBasket",
+            :nap)
+        end.to raise_error(Basket::Error, "You must implement perform in your Basket class.")
+      end
     end
   end
 
@@ -176,15 +184,6 @@ RSpec.describe Basket do
     end
   end
 
-  context "when perform is not defined" do
-    it "raises an error" do
-      expect do
-        Basket.add("NonPerformantBasket",
-          :nap)
-      end.to raise_error(Basket::Error, "You must implement perform in your Basket class.")
-    end
-  end
-
   describe ".peek" do
     it "returns the data for the given queue" do
       Basket.add("DummyGroceryBasket", "Onions")
@@ -277,6 +276,26 @@ RSpec.describe Basket do
         Basket.add("DummySearchAndDestroyBasket", onions)
         element_to_delete_id = "non_existent_id"
         expect { Basket.remove("DummySearchAndDestroyBasket", element_to_delete_id) }.to raise_error(Basket::ElementNotFoundError)
+      end
+    end
+  end
+
+  describe ".contents" do
+    it "returns the data for the whole basket" do
+      Basket.add("DummyGroceryBasket", "Onions")
+      Basket.add("DummyStockBasket", {stock: "ORCL", purchased_price: 93.02})
+
+      expect(Basket.contents).to be_a(Hash)
+      expect(Basket.contents.keys).to eq(["DummyGroceryBasket", "DummyStockBasket"])
+      expect(Basket.contents["DummyGroceryBasket"]).to be_an(Array)
+      expect(Basket.contents["DummyGroceryBasket"].first).to be_a(Basket::Element)
+      expect(Basket.contents["DummyGroceryBasket"].first.data).to eq("Onions")
+    end
+
+    context "when the basket is inspected before anything is done to it" do
+      it "returns an empty hash" do
+        expect(Basket.contents).to be_a(Hash)
+        expect(Basket.contents.keys).to eq([])
       end
     end
   end
