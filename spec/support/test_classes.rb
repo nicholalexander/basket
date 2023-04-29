@@ -20,7 +20,7 @@ class DummyGroceryBasket
   end
 
   def on_success
-    puts "Add #{batch} to bag"
+    puts "Add #{batch.map(&:to_s).join(", ")} to bag"
   end
 end
 
@@ -62,7 +62,6 @@ class DummyErrorsBasket
   include Basket::Batcher
 
   def on_failure
-    raise "This Error isn't raised!"
   end
 end
 

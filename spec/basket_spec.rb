@@ -27,7 +27,7 @@ RSpec.describe Basket do
   end
 
   describe ".perform" do
-    it "will perform an action when the basket is full" do
+    it "will call perform when the basket is full" do
       stubbed_baskets = Mocktail.of_next(DummyGroceryBasket, count: 2)
       performable_basket = stubbed_baskets[1]
       Basket.add("DummyGroceryBasket", :milk)
@@ -36,6 +36,13 @@ RSpec.describe Basket do
       expect(DummyGroceryBasket.basket_options_hash).to eq({size: 2})
 
       verify { performable_basket.perform }
+    end
+
+    it "performs the action when the basket is full" do
+      Basket.add("DummyGroceryBasket", :milk)
+      Basket.add("DummyGroceryBasket", :cookies)
+
+      expect($stdout).to have_received(:puts).with("Checkout")
     end
 
     it "processes the batch" do
@@ -133,6 +140,13 @@ RSpec.describe Basket do
 
       expect(stubbed_basket).to have_received(:perform)
       expect(stubbed_basket).to have_received(:on_success)
+    end
+
+    it "runs on_success after the batch is processed" do
+      Basket.add("DummyGroceryBasket", :milk)
+      Basket.add("DummyGroceryBasket", :cookies)
+
+      expect($stdout).to have_received(:puts).with("Add milk, cookies to bag")
     end
   end
 
