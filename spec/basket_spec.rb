@@ -69,6 +69,17 @@ RSpec.describe Basket do
         end.to raise_error(Basket::Error, "You must implement perform in your Basket class.")
       end
     end
+
+    context "when the basket is over capacity" do
+      it "processes the batch" do
+        Basket.queue_collection.push("DummyGroceryBasket", :milk)
+        Basket.queue_collection.push("DummyGroceryBasket", :cookies)
+
+        Basket.add("DummyGroceryBasket", :eggs)
+
+        expect($stdout).to have_received(:puts).with("Checkout")
+      end
+    end
   end
 
   describe ".on_add" do

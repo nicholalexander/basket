@@ -53,7 +53,7 @@ module Basket
     end
 
     def basket_full?(queue_length, queue_class)
-      queue_length == queue_class.basket_options_hash[:size]
+      queue_length >= queue_class.basket_options_hash[:size]
     end
 
     def maybe_raise_basket_error(e)
