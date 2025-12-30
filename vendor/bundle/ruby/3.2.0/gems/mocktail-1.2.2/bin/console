@@ -1,0 +1,81 @@
+#!/usr/bin/env ruby
+require "bundler/setup"
+require "mocktail"
+
+# You can add fixtures and/or initialization code here to make experimenting
+# with your gem easier. You can also use a different console, if you like.
+class Negroni
+  def self.ingredients
+    [:gin, :campari, :sweet_vermouth]
+  end
+
+  def shake!(shaker)
+    shaker.mix(self.class.ingredients)
+  end
+
+  def sip(amount)
+    raise "unimplemented"
+  end
+end
+
+include Mocktail::DSL
+class UserRepository
+  def find(id); end
+
+  def transaction(&blk); end
+end
+
+class Auditor
+  def record!(message, user:, action: nil); end
+end
+
+class Shaker
+  def combine(*args); end
+end
+class Glass
+  def pour!(drink); end
+end
+class Bar
+  def pass(glass, to:)
+  end
+end
+
+class Bartender
+  def initialize
+    @shaker = Shaker.new
+    @glass = Glass.new
+    @bar = Bar.new
+  end
+
+  def make_drink(name, customer:)
+    if name == :negroni
+      drink = @shaker.combine(:gin, :campari, :sweet_vermouth)
+      @glass.pour!(drink)
+      @bar.pass(@glass, to: customer)
+    end
+  end
+end
+
+class IceTray
+  def fill(water_type, amount)
+  end
+end
+
+class Shop
+  def self.open!(bar_id)
+  end
+
+  def self.close!(bar_id)
+  end
+end
+
+Mocktail.replace(Shop)
+
+stubs { |m| Shop.open!(m.numeric) }.with { :a_bar }
+
+Shop.open!(42)
+
+Shop.close!(42)
+
+require "pry"
+Pry.start
