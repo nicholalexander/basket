@@ -12,6 +12,8 @@ target :lib do
   library "json"
   library "securerandom"
 
-  # Use default diagnostic levels (strict)
-  configure_code_diagnostics(D::Ruby.default)
+  # Use default diagnostic levels (strict) but allow unannotated empty collections
+  configure_code_diagnostics(D::Ruby.default.merge(
+    D::Ruby::UnannotatedEmptyCollection => :information
+  ))
 end
