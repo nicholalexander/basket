@@ -32,4 +32,10 @@ jobs:
       run: bundle exec rake
     - name: Run type checks
       if: matrix.ruby == '3.2.2'
-      run: bundle exec steep check
+      run: |
+        echo "=== Checking file content ==="
+        head -25 lib/basket/backend_adapter/redis_backend.rb
+        echo "=== Steep version ==="
+        bundle exec ruby -e "require 'steep'; puts Steep::VERSION"
+        echo "=== Running steep ==="
+        bundle exec steep check
