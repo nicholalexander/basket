@@ -15,9 +15,13 @@ module Basket
       end
 
       def data
-        @client.scan_each.each_with_object(Hash[]) do |queue, response|
+        response = {} #: Hash[String, Array[Hash[String, untyped]]]
+
+        @client.scan_each do |queue|
           response[queue] = deserialized_queue_data(queue)
         end
+
+        response
       end
 
       def search(queue, &block)
