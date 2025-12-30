@@ -15,7 +15,7 @@ module Basket
       end
 
       def data
-        response = {}
+        response = Hash.new
 
         @client.scan_each do |queue|
           response[queue] = deserialized_queue_data(queue)
