@@ -17,7 +17,7 @@ module Basket
     def to_h: () -> Hash[Symbol, untyped]
 
     # Convert to JSON string
-    def to_json: (*untyped) -> String
+    def to_json: (*untyped _args) -> String
 
     # Equality comparison
     def ==: (Element other) -> bool
