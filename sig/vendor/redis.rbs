@@ -1,0 +1,20 @@
+# External type stubs for redis gem
+class Redis
+  def initialize: (?host: String, ?port: Integer, ?db: Integer, ?url: String) -> void
+  def lpush: (String key, String value) -> Integer
+  def lrange: (String key, Integer start, Integer stop) -> Array[String]
+  def llen: (String key) -> Integer
+  def lrem: (String key, Integer count, String value) -> Integer
+  def del: (String key) -> Integer
+  def scan_each: () { (String) -> void } -> void
+
+  class Namespace
+    def initialize: (Symbol namespace, redis: Redis) -> void
+    def lpush: (String key, String value) -> Integer
+    def lrange: (String key, Integer start, Integer stop) -> Array[String]
+    def llen: (String key) -> Integer
+    def lrem: (String key, Integer count, String value) -> Integer
+    def del: (String key) -> Integer
+    def scan_each: () { (String) -> void } -> void
+  end
+end

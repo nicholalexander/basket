@@ -1,0 +1,28 @@
+# Type signatures for Basket::Element
+module Basket
+  class Element
+    class InvalidElement < StandardError
+    end
+
+    attr_reader data: untyped
+    attr_reader id: String
+
+    # Create an Element from a queue item (Element or Hash)
+    def self.from_queue: (Element | Hash[String, untyped] element) -> Element
+
+    # Initialize with data and optional ID
+    def initialize: (untyped data, ?String id) -> void
+
+    # Convert to hash representation
+    def to_h: () -> Hash[Symbol, untyped]
+
+    # Convert to JSON string
+    def to_json: (*untyped) -> String
+
+    # Equality comparison
+    def ==: (Element other) -> bool
+
+    @data: untyped
+    @id: String
+  end
+end

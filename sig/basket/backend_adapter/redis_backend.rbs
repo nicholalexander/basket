@@ -1,0 +1,38 @@
+# Type signatures for Basket::BackendAdapter::RedisBackend
+module Basket
+  class BackendAdapter
+    class RedisBackend < BackendAdapter
+      attr_reader client: untyped  # Redis::Namespace
+
+      def initialize: () -> void
+
+      def data: () -> Hash[String, Array[Hash[String, untyped]]]
+
+      def search: (String queue) { (untyped) -> bool } -> Array[Hash[String, untyped]]
+
+      def remove: (String queue, String element_id) -> Hash[String, untyped]?
+
+      def push: (String queue, Element data) -> Integer
+
+      def length: (String queue) -> Integer
+
+      def clear: (String queue) -> Integer
+
+      def read: (String queue) -> Array[Hash[String, untyped]]
+
+      private
+
+      def serialize_data: (Element data) -> String
+
+      def deserialized_queue_data: (String queue) -> Array[Hash[String, untyped]]
+
+      def select_redis_connection: () -> untyped
+
+      def redis_connection_from_host: () -> untyped
+
+      def redis_connection_from_url: () -> untyped
+
+      @client: untyped
+    end
+  end
+end

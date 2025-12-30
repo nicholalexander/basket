@@ -1,0 +1,36 @@
+# Type signatures for Basket::HandleAdd
+module Basket
+  class HandleAdd
+    # Class method to call the handler
+    def self.call: (String queue, untyped data) -> void
+
+    def initialize: (String queue, untyped data) -> void
+
+    def call: () -> void
+
+    private
+
+    def setup_batchers: () -> void
+
+    def add_to_basket: (?untyped data) -> void
+
+    def perform: () -> void
+
+    def failure: (Exception error) -> void
+
+    def class_for_queue: () -> untyped
+
+    def raise_basket_not_found: () -> bot
+
+    def basket_full?: (Integer queue_length, untyped queue_class) -> bool
+
+    def maybe_raise_basket_error: (Exception e) -> void
+
+    @queue: String
+    @data: untyped
+    @queue_collection: QueueCollection
+    @queue_class: untyped
+    @queue_instance: untyped
+    @queue_length: Integer
+  end
+end

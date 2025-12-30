@@ -1,4 +1,34 @@
+# Type signatures for the Basket module
 module Basket
   VERSION: String
-  # See the writing guide of rbs: https://github.com/ruby/rbs#guides
+
+  # Configuration instance
+  def self.config: () -> Configuration
+
+  # Configure the Basket module
+  def self.configure: () { (Configuration) -> void } -> void
+
+  # Get all queue contents
+  def self.contents: () -> Hash[String, Array[untyped]]
+
+  # Peek at a queue's contents
+  def self.peek: (String queue) -> Array[untyped]
+
+  # Get the queue collection instance
+  def self.queue_collection: () -> QueueCollection
+
+  # Add data to a queue
+  def self.add: (String queue, untyped data) -> void
+
+  # Search a queue with a block
+  def self.search: (String queue) { (untyped) -> bool } -> Array[Element]
+
+  # Remove an element by ID
+  def self.remove: (String queue, String id) -> untyped
+
+  # Clear all queues
+  def self.clear_all: () -> nil
+
+  @config: Configuration?
+  @queue_collection: QueueCollection?
 end

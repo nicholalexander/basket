@@ -1,0 +1,36 @@
+# Type signatures for Basket::Batcher module
+module Basket
+  module Batcher
+    def self.included: (Class base) -> void
+
+    # Get the batch data
+    def batch: () -> Array[untyped]
+
+    # Perform action when basket is full (must be implemented)
+    def perform: () -> void
+
+    # Callback after successful perform
+    def on_success: () -> void
+
+    # Callback when an item is added
+    def on_add: () -> void
+
+    # Callback on failure (has access to error method)
+    def on_failure: () -> void
+
+    # Error accessor available in on_failure
+    def error: () -> Exception
+
+    @batch: Array[untyped]?
+
+    module ClassMethods
+      # Set basket options
+      def basket_options: (Hash[Symbol, untyped] args) -> Hash[Symbol, untyped]
+
+      # Get basket options hash
+      def basket_options_hash: () -> Hash[Symbol, untyped]
+
+      @basket_options: Hash[Symbol, untyped]?
+    end
+  end
+end

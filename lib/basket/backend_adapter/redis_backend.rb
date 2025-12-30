@@ -15,13 +15,9 @@ module Basket
       end
 
       def data
-        response = {}
-
-        @client.scan_each do |queue|
+        @client.scan_each.each_with_object(Hash[]) do |queue, response|
           response[queue] = deserialized_queue_data(queue)
         end
-
-        response
       end
 
       def search(queue, &block)
@@ -80,7 +76,7 @@ module Basket
 
       def redis_connection_from_url
         Redis.new(
-          url: Basket.config.redis_url
+          url: Basket.config.redis_url.to_s
         )
       end
     end

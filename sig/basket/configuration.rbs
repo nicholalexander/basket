@@ -1,0 +1,23 @@
+# Type signatures for Basket::Configuration
+module Basket
+  class Configuration
+    attr_accessor redis_host: String
+    attr_accessor redis_port: Integer
+    attr_accessor redis_db: Integer
+    attr_accessor namespace: Symbol
+    attr_accessor redis_url: String?
+    attr_reader backend: singleton(BackendAdapter::MemoryBackend) | singleton(BackendAdapter::RedisBackend)
+
+    def initialize: () -> void
+
+    # Set the backend type
+    def backend=: (:memory | :redis backend) -> void
+
+    @redis_host: String
+    @redis_port: Integer
+    @redis_db: Integer
+    @backend: singleton(BackendAdapter::MemoryBackend) | singleton(BackendAdapter::RedisBackend)
+    @namespace: Symbol
+    @redis_url: String?
+  end
+end

@@ -28,9 +28,9 @@ module Basket
 
       def remove(queue, id)
         index_of_element_to_delete = @data[queue].index { |element| element.id == id }
+        return nil if index_of_element_to_delete.nil?
+
         @data[queue].delete_at(index_of_element_to_delete)
-      rescue
-        nil
       end
 
       def clear(queue)

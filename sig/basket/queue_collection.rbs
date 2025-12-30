@@ -1,0 +1,40 @@
+# Type signatures for Basket::QueueCollection
+module Basket
+  class QueueCollection
+    def initialize: (?untyped backend) -> void
+
+    # Push data to a queue, returns new length
+    def push: (String queue, untyped data) -> Integer
+
+    # Get queue length
+    def length: (String queue) -> Integer
+
+    # Read all items from a queue
+    def read: (String queue) -> Array[untyped]
+
+    # Search a queue with a query proc
+    def search: (String queue, untyped query) -> Array[Element]
+
+    # Remove an element by ID
+    def remove: (String queue, String id) -> untyped
+
+    # Clear a queue
+    def clear: (String queue) -> void
+
+    # Get all data
+    def data: () -> Hash[String, Array[untyped]]
+
+    # Reset the backend
+    def reset_backend: () -> void
+
+    private
+
+    def check_for_basket: (String queue) -> void
+
+    def check_for_zero_length: (String queue) -> void
+
+    def check_for_raw_removed_element: (untyped raw_removed_element) -> void
+
+    @backend: untyped
+  end
+end

@@ -20,6 +20,16 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true
+        bundler-cache: false
+    - name: Install dependencies
+      run: |
+        if [[ "${{ matrix.ruby }}" == "3.2.2" ]]; then
+          bundle install
+        else
+          bundle install --without type_check
+        fi
     - name: Run the default task
       run: bundle exec rake
+    - name: Run type checks
+      if: matrix.ruby == '3.2.2'
+      run: bundle exec steep check

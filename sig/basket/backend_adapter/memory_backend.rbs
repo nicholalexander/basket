@@ -1,0 +1,24 @@
+# Type signatures for Basket::BackendAdapter::MemoryBackend
+module Basket
+  class BackendAdapter
+    class MemoryBackend < BackendAdapter
+      attr_reader data: Hash[String, Array[Element]]
+
+      def initialize: () -> void
+
+      def push: (String queue, Element data) -> untyped
+
+      def length: (String queue) -> Integer
+
+      def read: (String queue) -> Array[Element]?
+
+      def search: (String queue) { (untyped) -> bool } -> Array[Element]
+
+      def remove: (String queue, String id) -> Element?
+
+      def clear: (String queue) -> Array[untyped]
+
+      @data: Hash[String, Array[Element]]
+    end
+  end
+end

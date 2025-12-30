@@ -15,3 +15,9 @@ gem "rspec", "~> 3.0"
 gem "simplecov", require: false, group: :test
 gem "simplecov-json", require: false, group: :test
 gem "standard", "~> 1.30"
+
+# Type checking gems require Ruby >= 3.2 due to activesupport/minitest dependency
+group :type_check do
+  gem "steep", require: false
+  gem "rbs", require: false
+end
