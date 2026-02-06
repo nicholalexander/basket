@@ -30,9 +30,8 @@ module Basket
 
       def remove(queue, element_id)
         element = deserialized_queue_data(queue).find { |raw_element| raw_element["id"] == element_id }
-
+        return nil unless element
         @client.lrem(queue, 1, element.to_json)
-
         element
       end
 

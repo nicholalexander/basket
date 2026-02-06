@@ -28,7 +28,7 @@ module Basket
 
     def add_to_basket(data = @data)
       @queue_length = @queue_collection.push(@queue, data)
-      @queue_instance.define_singleton_method(:element) { data }
+      @queue_instance.instance_variable_set(:@element, data)
       @queue_instance.on_add
     end
 
@@ -39,7 +39,7 @@ module Basket
     end
 
     def failure(error)
-      @queue_instance.define_singleton_method(:error) { error }
+      @queue_instance.instance_variable_set(:@error, error)
       @queue_instance.on_failure
     end
 
@@ -53,12 +53,11 @@ module Basket
     end
 
     def basket_full?(queue_length, queue_class)
-      queue_length == queue_class.basket_options_hash[:size]
+      queue_length >= queue_class.basket_options_hash[:size]
     end
 
     def maybe_raise_basket_error(e)
-      raise e if e.instance_of?(Basket::Error)
-      raise e if e.instance_of?(Basket::BasketNotFoundError)
+      raise e if e.is_a?(Basket::Error)
     end
   end
 end

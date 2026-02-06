@@ -124,6 +124,14 @@ RSpec.describe Basket::BackendAdapter::MemoryBackend do
         expect(result).to be_nil
       end
     end
+
+    context "when the queue does not exist" do
+      it "returns nil" do
+        backend = described_class.new
+        result = backend.remove("nonexistent_queue", "some_id")
+        expect(result).to be_nil
+      end
+    end
   end
 
   describe "#clear" do

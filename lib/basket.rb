@@ -14,8 +14,6 @@ require_relative "basket/version"
 require "json"
 
 module Basket
-  class Error < StandardError; end
-
   def self.config
     @config ||= Configuration.new
   end

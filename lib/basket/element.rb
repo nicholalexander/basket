@@ -32,6 +32,7 @@ module Basket
     end
 
     def ==(other)
+      return false unless other.respond_to?(:to_h)
       to_h == other.to_h
     end
   end

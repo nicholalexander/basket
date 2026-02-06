@@ -17,6 +17,8 @@ module Basket
       end
     end
 
+    attr_reader :element, :error
+
     def batch
       @batch ||= Basket.queue_collection.read(self.class.name)
     end

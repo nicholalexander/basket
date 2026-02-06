@@ -9,7 +9,7 @@ module Basket
 
       def push(queue, data)
         @data[queue] = [] if @data[queue].nil?
-        @data[queue] <<= data
+        @data[queue] << data
       end
 
       def length(queue)
@@ -27,10 +27,10 @@ module Basket
       end
 
       def remove(queue, id)
-        index_of_element_to_delete = @data[queue].index { |element| element.id == id }
-        @data[queue].delete_at(index_of_element_to_delete)
-      rescue
-        nil
+        return nil unless @data[queue]
+        index = @data[queue].index { |element| element.id == id }
+        return nil if index.nil?
+        @data[queue].delete_at(index)
       end
 
       def clear(queue)
