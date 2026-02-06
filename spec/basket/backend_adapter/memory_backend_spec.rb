@@ -21,6 +21,17 @@ RSpec.describe Basket::BackendAdapter::MemoryBackend do
     end
   end
 
+  describe "#push" do
+    context "when data is nil" do
+      it "stores nil in the queue" do
+        backend = described_class.new
+        backend.push("test_queue", nil)
+        expect(backend.read("test_queue")).to eq([nil])
+        expect(backend.length("test_queue")).to eq(1)
+      end
+    end
+  end
+
   describe "#length" do
     it "returns the length of the given queue" do
       backend = described_class.new
@@ -28,6 +39,13 @@ RSpec.describe Basket::BackendAdapter::MemoryBackend do
       backend.push("test_queue", {b: 2})
 
       expect(backend.length("test_queue")).to eq(2)
+    end
+
+    context "when the queue does not exist" do
+      it "returns 0" do
+        backend = described_class.new
+        expect(backend.length("nonexistent_queue")).to eq(0)
+      end
     end
   end
 
@@ -38,6 +56,13 @@ RSpec.describe Basket::BackendAdapter::MemoryBackend do
       backend.push("test_queue", {b: 2})
 
       expect(backend.read("test_queue")).to eq([{a: 1}, {b: 2}])
+    end
+
+    context "when the queue does not exist" do
+      it "returns an empty array" do
+        backend = described_class.new
+        expect(backend.read("nonexistent_queue")).to eq([])
+      end
     end
   end
 
@@ -71,6 +96,14 @@ RSpec.describe Basket::BackendAdapter::MemoryBackend do
         end
 
         expect(results.map(&:data)).to eq([{a: 1}, {a: 1}])
+      end
+    end
+
+    context "when the queue does not exist" do
+      it "returns an empty array" do
+        backend = described_class.new
+        results = backend.search("nonexistent_queue") { |_| true }
+        expect(results).to eq([])
       end
     end
 

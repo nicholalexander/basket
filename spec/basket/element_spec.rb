@@ -22,6 +22,18 @@ RSpec.describe Basket::Element do
         expect { Basket::Element.from_queue(element) }.to raise_error(Basket::Element::InvalidElement, "element must be a hash or a Basket::Element")
       end
     end
+
+    context "when the hash is missing the data key" do
+      it "raises InvalidElement" do
+        expect { Basket::Element.from_queue({"id" => "abc"}) }.to raise_error(Basket::Element::InvalidElement, "both data and id must be present")
+      end
+    end
+
+    context "when the hash is missing the id key" do
+      it "raises InvalidElement" do
+        expect { Basket::Element.from_queue({"data" => "foo"}) }.to raise_error(Basket::Element::InvalidElement, "both data and id must be present")
+      end
+    end
   end
 
   describe "#==" do

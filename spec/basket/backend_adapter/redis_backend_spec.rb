@@ -31,6 +31,14 @@ RSpec.describe Basket::BackendAdapter::RedisBackend do
       expect(result["data"]).to eq({"a" => 1})
     end
 
+    context "when the queue is empty" do
+      it "returns an empty array" do
+        backend = described_class.new
+        results = backend.search("empty_queue") { |_| true }
+        expect(results).to eq([])
+      end
+    end
+
     context "when there are multiple matches" do
       it "returns all of them" do
         backend = described_class.new
@@ -61,6 +69,14 @@ RSpec.describe Basket::BackendAdapter::RedisBackend do
       result = backend.remove("test_queue", element_2.id)
 
       expect(result).to eq(JSON.parse(element_2.to_json))
+    end
+
+    context "when the queue is empty" do
+      it "returns nil" do
+        backend = described_class.new
+        result = backend.remove("empty_queue", "some_id")
+        expect(result).to be_nil
+      end
     end
 
     context "when the id does not correspond to an element" do

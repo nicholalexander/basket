@@ -99,3 +99,31 @@ class PizzaBasket
   include Basket::Batcher
   basket_options size: 10
 end
+
+class OnAddErrorBasket
+  include Basket::Batcher
+  basket_options size: 2
+
+  def on_add
+    raise "on_add exploded"
+  end
+
+  def on_failure
+  end
+end
+
+class OnSuccessErrorBasket
+  include Basket::Batcher
+  basket_options size: 1
+
+  def perform
+    puts "performing"
+  end
+
+  def on_success
+    raise "on_success exploded"
+  end
+
+  def on_failure
+  end
+end

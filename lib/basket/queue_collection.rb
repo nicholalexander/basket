@@ -37,7 +37,8 @@ module Basket
     end
 
     def data
-      @backend.data
+      raw = @backend.data
+      raw.transform_values { |elements| elements.map { |e| Element.from_queue(e) } }
     end
 
     def reset_backend

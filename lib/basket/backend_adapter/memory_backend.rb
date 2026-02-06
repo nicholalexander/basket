@@ -19,10 +19,11 @@ module Basket
       end
 
       def read(queue)
-        @data[queue]
+        @data[queue] || []
       end
 
       def search(queue, &block)
+        return [] unless @data[queue]
         @data[queue].select { |element| block.call(element.data) }
       end
 

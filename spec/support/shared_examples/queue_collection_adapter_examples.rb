@@ -116,6 +116,29 @@ RSpec.shared_examples "for QueueCollection" do |backend|
       expect(element_to_delete.data).to eq(deleted_element)
       expect(queue_collection.read("PlaylistBasket")).to eq([{"song" => "Sacred Feathers", "artist" => "Parra for Cuva, Senoy"}])
     end
+
+    context "when the element does not exist in the queue" do
+      it "raises ElementNotFoundError" do
+        queue_collection.push("PlaylistBasket", {"song" => "Brown Study", "artist" => "Vansire"})
+        expect { queue_collection.remove("PlaylistBasket", "nonexistent_id") }.to raise_error(Basket::ElementNotFoundError)
+      end
+    end
+  end
+
+  describe "#data" do
+    it "returns a hash of queue names to arrays of Elements" do
+      queue_collection.push("PlaylistBasket", {"song" => "Brown Study", "artist" => "Vansire"})
+      queue_collection.push("RockBasket", {"color" => "white", "value_in_cents" => 300})
+
+      result = queue_collection.data
+
+      expect(result).to be_a(Hash)
+      expect(result.keys).to match_array(["PlaylistBasket", "RockBasket"])
+      expect(result["PlaylistBasket"]).to be_an(Array)
+      expect(result["PlaylistBasket"].first).to be_a(Basket::Element)
+      expect(result["PlaylistBasket"].first.data).to eq({"song" => "Brown Study", "artist" => "Vansire"})
+      expect(result["RockBasket"].first).to be_a(Basket::Element)
+    end
   end
 
   describe "#clear" do

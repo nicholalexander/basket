@@ -196,6 +196,27 @@ RSpec.describe Basket do
       expect { Basket.add("DummyErrorsBasket", "Nothing") }.to raise_error(Basket::Error)
       expect(stubbed_basket).not_to have_received(:on_failure)
     end
+
+    it "is called when on_add raises an error" do
+      stubbed_basket = OnAddErrorBasket.new
+      allow(OnAddErrorBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:on_failure).and_call_original
+
+      Basket.add("OnAddErrorBasket", "something")
+
+      expect(stubbed_basket).to have_received(:on_failure)
+    end
+
+    it "is called when on_success raises an error and does not clear the queue" do
+      stubbed_basket = OnSuccessErrorBasket.new
+      allow(OnSuccessErrorBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:on_failure).and_call_original
+
+      Basket.add("OnSuccessErrorBasket", "something")
+
+      expect(stubbed_basket).to have_received(:on_failure)
+      expect(Basket.queue_collection.length("OnSuccessErrorBasket")).to eq(1)
+    end
   end
 
   describe ".peek" do
