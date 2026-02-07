@@ -159,6 +159,34 @@ Basket.configure do |config|
 end
 ```
 
+### Per-Class Backend Configuration
+
+You can also configure the backend on a per-class basis by passing a `backend` option to `basket_options`. This allows different basket classes to use different backends:
+
+```ruby
+class QuicheBasket
+  include Basket::Batcher
+  basket_options size: 15, backend: :memory
+
+  def perform
+    # This basket uses the in-memory backend
+  end
+end
+
+class OrderBasket
+  include Basket::Batcher
+  basket_options size: 10, backend: :redis
+
+  def perform
+    # This basket uses the Redis backend
+  end
+end
+```
+
+When a per-class backend is specified, it takes precedence over the global `Basket.config.backend`. If no `backend` option is provided, the class falls back to the global configuration.
+
+`Basket.search`, `Basket.remove`, and `Basket.peek` automatically route to the correct backend, including per-class backends.
+
 ## Gotcha!
 
 ### `on_failure`
@@ -173,6 +201,12 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 This project uses Guard to facilitate local development.  You can run it with `bundle exec guard`.  It will run specs on change to files and will run `standard --fix` after passing tests.
 
 Looking through the code base, the majority of the work happens in [lib/basket/handle_add.rb](https://github.com/nicholalexander/basket/blob/main/lib/basket/handle_add.rb).  Alternatively, you might be interested in the [backend adapters](https://github.com/nicholalexander/basket/tree/main/lib/basket/backend_adapter) for how the gem works with in memory hashes and/or a redis backend.
+
+### Testing with Redis
+
+By default, the test suite uses [MockRedis](https://github.com/sds/mock_redis) to stub all Redis calls so that no real Redis server is required. This is configured in `spec/spec_helper.rb` where `Redis.new` is intercepted and routed to `MockRedis.new`.
+
+To run integration tests against a real Redis instance, comment out the `MockRedis` block in `spec/spec_helper.rb` and ensure Redis is running locally on the default port (6379).
 
 ## Contributing
 

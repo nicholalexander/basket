@@ -2,8 +2,6 @@ PATH
   remote: .
   specs:
     basket (0.0.7)
-      redis
-      redis-namespace
 
 GEM
   remote: https://rubygems.org/
@@ -143,6 +141,8 @@ DEPENDENCIES
   ostruct
   pry
   rake (~> 13.0)
+  redis
+  redis-namespace
   rspec (~> 3.0)
   simplecov
   simplecov-json
