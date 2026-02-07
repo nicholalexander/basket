@@ -127,3 +127,72 @@ class OnSuccessErrorBasket
   def on_failure
   end
 end
+
+class MemoryBackendBasket
+  include Basket::Batcher
+  basket_options size: 2, backend: :memory
+
+  def perform
+    puts "memory perform: #{batch}"
+  end
+end
+
+class RedisBackendBasket
+  include Basket::Batcher
+  basket_options size: 2, backend: :redis
+
+  def perform
+    puts "redis perform: #{batch}"
+  end
+end
+
+class DefaultBackendBasket
+  include Basket::Batcher
+  basket_options size: 2
+
+  def perform
+    puts "default perform: #{batch}"
+  end
+end
+
+class MemoryBackendSearchBasket
+  include Basket::Batcher
+  basket_options size: 100, backend: :memory
+
+  def perform
+    puts "memory search perform"
+  end
+end
+
+class RedisBackendSearchBasket
+  include Basket::Batcher
+  basket_options size: 100, backend: :redis
+
+  def perform
+    puts "redis search perform"
+  end
+end
+
+class ConcurrencyTrackingBasket
+  include Basket::Batcher
+  basket_options size: 5
+
+  @perform_count = 0
+  @perform_mutex = Mutex.new
+
+  class << self
+    attr_reader :perform_count, :perform_mutex
+
+    def reset_tracking
+      @perform_mutex.synchronize { @perform_count = 0 }
+    end
+
+    def increment_perform_count
+      @perform_mutex.synchronize { @perform_count += 1 }
+    end
+  end
+
+  def perform
+    self.class.increment_perform_count
+  end
+end

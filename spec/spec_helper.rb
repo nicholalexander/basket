@@ -38,6 +38,9 @@ RSpec.configure do |config|
     Mocktail.reset
   end
 
+  # All Redis calls are intercepted and routed to MockRedis so tests can run
+  # without a real Redis server. To run integration tests against a real Redis
+  # instance, comment out this block and ensure Redis is running locally.
   config.before(:each) do
     allow(Redis).to receive(:new).and_wrap_original do |_original_method, *args|
       MockRedis.new(*args)

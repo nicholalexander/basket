@@ -49,4 +49,18 @@ RSpec.describe Basket::Configuration do
       expect { configuration.backend = :bloop }.to raise_error(Basket::Error, /Unknown Backend/)
     end
   end
+
+  describe ".resolve_backend" do
+    it "resolves :memory to MemoryBackend" do
+      expect(Basket::Configuration.resolve_backend(:memory)).to eq(Basket::BackendAdapter::MemoryBackend)
+    end
+
+    it "resolves :redis to RedisBackend" do
+      expect(Basket::Configuration.resolve_backend(:redis)).to eq(Basket::BackendAdapter::RedisBackend)
+    end
+
+    it "raises Basket::Error for unknown backend" do
+      expect { Basket::Configuration.resolve_backend(:unknown) }.to raise_error(Basket::Error, /Unknown Backend/)
+    end
+  end
 end
