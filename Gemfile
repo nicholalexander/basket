@@ -10,6 +10,7 @@ gem "guard"
 gem "guard-rspec", require: false
 gem "guard-standardrb", require: false
 gem "mocktail"
+gem "ostruct"
 gem "rake", "~> 13.0"
 gem "rspec", "~> 3.0"
 gem "simplecov", require: false, group: :test
