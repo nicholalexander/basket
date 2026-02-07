@@ -5,6 +5,9 @@ require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new(:spec)
 
-require "standard/rake"
-
-task default: %i[spec standard:fix]
+if RUBY_VERSION < "3.4"
+  require "standard/rake"
+  task default: %i[spec standard:fix]
+else
+  task default: :spec
+end
