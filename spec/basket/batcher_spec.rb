@@ -46,7 +46,7 @@ RSpec.describe Basket::Batcher do
   describe "#on_failure" do
     it "raises the error" do
       flower_basket = FlowerBasket.new
-      flower_basket.define_singleton_method(:error) { StandardError.new("bloop") }
+      flower_basket.instance_variable_set(:@error, StandardError.new("bloop"))
       expect { flower_basket.on_failure }.to raise_error(StandardError, "bloop")
     end
   end

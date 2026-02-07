@@ -1,4 +1,174 @@
 module Basket
   VERSION: String
-  # See the writing guide of rbs: https://github.com/ruby/rbs#guides
+
+  def self.config: () -> Configuration
+  def self.configure: () { (Configuration) -> void } -> void
+  def self.contents: () -> Hash[String, Array[Element]]
+  def self.peek: (String queue) -> Array[untyped]
+  def self.queue_collection: () -> QueueCollection
+  def self.queue_collection_for: (singleton(BackendAdapter) backend_class) -> QueueCollection
+  def self.add: (String queue, untyped data) -> void
+  def self.search: (String queue) { (untyped) -> boolish } -> Array[Element]
+  def self.remove: (String queue, String id) -> untyped
+  def self.clear_all: () -> void
+
+  private
+
+  def self.queue_collection_for_queue: (String queue) -> QueueCollection
+
+  class Error < StandardError
+  end
+
+  class BasketNotFoundError < Error
+  end
+
+  class EmptyBasketError < Error
+  end
+
+  class ElementNotFoundError < Error
+  end
+
+  class BackendAdapter
+    def data: () -> Hash[String, Array[Element | Hash[String, untyped]]]
+    def push: (String queue, Element data) -> void
+    def length: (String queue) -> Integer
+    def read: (String queue) -> Array[Element | Hash[String, untyped]]
+    def search: (String queue) { (untyped) -> boolish } -> Array[Element | Hash[String, untyped]]
+    def remove: (String queue, String id) -> (Element | Hash[String, untyped] | nil)
+    def clear: (String queue) -> void
+    def with_lock: [T] (String queue) { () -> T } -> T
+
+    class MemoryBackend < BackendAdapter
+      include MonitorMixin
+
+      @data: Hash[String, Array[Element]]
+      @queue_locks: Hash[String, Mutex]
+      @queue_locks_mutex: Mutex
+
+      def initialize: () -> void
+      def data: () -> Hash[String, Array[Element]]
+      def push: (String queue, Element data) -> void
+      def length: (String queue) -> Integer
+      def read: (String queue) -> Array[Element]
+      def search: (String queue) { (untyped) -> boolish } -> Array[Element]
+      def remove: (String queue, String id) -> Element?
+      def clear: (String queue) -> Array[Element]
+      def with_lock: [T] (String queue) { () -> T } -> T
+    end
+
+    class RedisBackend < BackendAdapter
+      attr_reader client: untyped
+
+      def initialize: () -> void
+      def data: () -> Hash[String, Array[Hash[String, untyped]]]
+      def push: (String queue, Element data) -> Integer
+      def length: (String queue) -> Integer
+      def read: (String queue) -> Array[Hash[String, untyped]]
+      def search: (String queue) { (untyped) -> boolish } -> Array[Hash[String, untyped]]
+      def remove: (String queue, String id) -> Hash[String, untyped]?
+      def clear: (String queue) -> void
+      def with_lock: [T] (String queue) { () -> T } -> T
+
+      private
+
+      def serialize_data: (Element data) -> String
+      def deserialized_queue_data: (String queue) -> Array[Hash[String, untyped]]
+      def select_redis_connection: () -> untyped
+      def redis_connection_from_host: () -> untyped
+      def redis_connection_from_url: () -> untyped
+    end
+  end
+
+  module Batcher : Object
+    def self.included: (Module base) -> void
+
+    attr_reader element: untyped
+    attr_reader error: StandardError
+
+    def batch: () -> Array[untyped]
+    def perform: () -> void
+    def on_success: () -> void
+    def on_add: () -> void
+    def on_failure: () -> void
+
+    module ClassMethods
+      @basket_options: Hash[Symbol, untyped]
+
+      def basket_options: (Hash[Symbol, untyped] args) -> void
+      def basket_options_hash: () -> Hash[Symbol, untyped]
+    end
+  end
+
+  class Configuration
+    attr_accessor redis_host: String
+    attr_accessor redis_port: Integer
+    attr_accessor redis_db: Integer
+    attr_accessor namespace: Symbol
+    attr_accessor redis_url: String?
+    attr_reader backend: singleton(BackendAdapter)
+
+    def initialize: () -> void
+    def backend=: (Symbol backend) -> void
+    def self.resolve_backend: (Symbol backend) -> singleton(BackendAdapter)
+  end
+
+  class Element
+    class InvalidElement < Basket::Error
+    end
+
+    attr_reader data: untyped
+    attr_reader id: String
+
+    def self.from_queue: (Element | Hash[String, untyped] element) -> Element
+    def initialize: (untyped data, ?String id) -> void
+    def to_h: () -> Hash[Symbol, untyped]
+    def to_json: (*untyped) -> String
+    def ==: (untyped other) -> bool
+  end
+
+  class HandleAdd
+    def self.call: (String queue, untyped data) -> void
+    def initialize: (String queue, untyped data) -> void
+    def call: () -> void
+
+    private
+
+    @queue: String
+    @data: untyped
+    @queue_class: singleton(Object)
+    @queue_collection: QueueCollection
+    @queue_instance: Batcher
+    @queue_length: Integer
+
+    def setup_batchers: () -> void
+    def add_to_basket: (?untyped data) -> void
+    def perform: () -> void
+    def failure: (StandardError error) -> void
+    def queue_collection_for: (singleton(Object) queue_class) -> QueueCollection
+    def class_for_queue: () -> singleton(Object)
+    def raise_basket_not_found: () -> bot
+    def basket_full?: (Integer queue_length, singleton(Object) queue_class) -> bool
+    def maybe_raise_basket_error: (StandardError e) -> void
+  end
+
+  class QueueCollection
+    @backend: BackendAdapter
+
+    def initialize: (?singleton(BackendAdapter) backend) -> void
+    def push: (String queue, untyped data) -> Integer
+    def length: (String queue) -> Integer
+    def read: (String queue) -> Array[untyped]
+    def search: (String queue, Proc query) -> Array[Element]
+    def remove: (String queue, String id) -> untyped
+    def clear: (String queue) -> void
+    def with_lock: [T] (String queue) { () -> T } -> T
+    def data: () -> Hash[String, Array[Element]]
+    def reset_backend: () -> void
+
+    private
+
+    def check_for_basket: (String queue) -> void
+    def check_for_zero_length: (String queue) -> void
+    def check_for_raw_removed_element: (Element | Hash[String, untyped] | nil raw_removed_element) -> void
+  end
 end

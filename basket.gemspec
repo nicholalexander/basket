@@ -27,8 +27,7 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "redis"
-  spec.add_dependency "redis-namespace"
-
   spec.add_development_dependency "mock_redis"
+  spec.add_development_dependency "redis"
+  spec.add_development_dependency "redis-namespace"
 end

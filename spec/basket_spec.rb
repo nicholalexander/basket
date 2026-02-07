@@ -196,6 +196,27 @@ RSpec.describe Basket do
       expect { Basket.add("DummyErrorsBasket", "Nothing") }.to raise_error(Basket::Error)
       expect(stubbed_basket).not_to have_received(:on_failure)
     end
+
+    it "is called when on_add raises an error" do
+      stubbed_basket = OnAddErrorBasket.new
+      allow(OnAddErrorBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:on_failure).and_call_original
+
+      Basket.add("OnAddErrorBasket", "something")
+
+      expect(stubbed_basket).to have_received(:on_failure)
+    end
+
+    it "is called when on_success raises an error and does not clear the queue" do
+      stubbed_basket = OnSuccessErrorBasket.new
+      allow(OnSuccessErrorBasket).to receive(:new).and_return(stubbed_basket)
+      allow(stubbed_basket).to receive(:on_failure).and_call_original
+
+      Basket.add("OnSuccessErrorBasket", "something")
+
+      expect(stubbed_basket).to have_received(:on_failure)
+      expect(Basket.queue_collection.length("OnSuccessErrorBasket")).to eq(1)
+    end
   end
 
   describe ".peek" do
@@ -321,6 +342,219 @@ RSpec.describe Basket do
       end
 
       expect(Basket.config.redis_host).to eq("some_non_standard_host")
+    end
+  end
+
+  describe "concurrent HandleAdd atomicity" do
+    before do
+      ConcurrencyTrackingBasket.reset_tracking
+    end
+
+    it "fires perform exactly once when concurrent threads hit the threshold" do
+      # ConcurrencyTrackingBasket has size 5. We add 5 items concurrently.
+      # Exactly one perform should fire.
+      threads = 5.times.map do |i|
+        Thread.new { Basket.add("ConcurrencyTrackingBasket", "item_#{i}") }
+      end
+      threads.each(&:join)
+
+      expect(ConcurrencyTrackingBasket.perform_count).to eq(1)
+    end
+
+    it "fires perform the correct number of times across multiple batches" do
+      # Add 20 items with size 5 => expect exactly 4 performs
+      # Using threads to add concurrently
+      threads = 20.times.map do |i|
+        Thread.new { Basket.add("ConcurrencyTrackingBasket", "item_#{i}") }
+      end
+      threads.each(&:join)
+
+      expect(ConcurrencyTrackingBasket.perform_count).to eq(4)
+    end
+
+    it "does not lose items when adding concurrently below threshold" do
+      # Add 3 items (below threshold of 5) concurrently
+      threads = 3.times.map do |i|
+        Thread.new { Basket.add("ConcurrencyTrackingBasket", "item_#{i}") }
+      end
+      threads.each(&:join)
+
+      expect(ConcurrencyTrackingBasket.perform_count).to eq(0)
+      expect(Basket.queue_collection.length("ConcurrencyTrackingBasket")).to eq(3)
+    end
+
+    it "clears the queue after perform so subsequent adds start fresh" do
+      # Fill one batch of 5
+      threads = 5.times.map do |i|
+        Thread.new { Basket.add("ConcurrencyTrackingBasket", "item_#{i}") }
+      end
+      threads.each(&:join)
+
+      expect(ConcurrencyTrackingBasket.perform_count).to eq(1)
+      expect(Basket.queue_collection.length("ConcurrencyTrackingBasket")).to eq(0)
+
+      # Add 2 more items -- should not trigger perform
+      Basket.add("ConcurrencyTrackingBasket", "extra_1")
+      Basket.add("ConcurrencyTrackingBasket", "extra_2")
+
+      expect(ConcurrencyTrackingBasket.perform_count).to eq(1)
+      expect(Basket.queue_collection.length("ConcurrencyTrackingBasket")).to eq(2)
+    end
+
+    it "does not raise errors under concurrent load" do
+      errors = Queue.new
+
+      threads = 50.times.map do |i|
+        Thread.new do
+          Basket.add("ConcurrencyTrackingBasket", "item_#{i}")
+        rescue => e
+          errors << e
+        end
+      end
+      threads.each(&:join)
+
+      error_list = []
+      error_list << errors.pop until errors.empty?
+      expect(error_list).to be_empty
+    end
+  end
+
+  describe "per-class backend search/remove/peek routing" do
+    before do
+      Basket.add("MemoryBackendSearchBasket", {name: "alpha", value: 1})
+      Basket.add("MemoryBackendSearchBasket", {name: "beta", value: 2})
+      Basket.add("MemoryBackendSearchBasket", {name: "gamma", value: 3})
+    end
+
+    describe ".peek" do
+      it "returns data from the per-class backend" do
+        result = Basket.peek("MemoryBackendSearchBasket")
+        expect(result.length).to eq(3)
+        expect(result.map { |d| d[:name] }).to contain_exactly("alpha", "beta", "gamma")
+      end
+
+      it "does not return per-class backend data from the global backend" do
+        global_data = Basket.queue_collection.data
+        expect(global_data.keys).not_to include("MemoryBackendSearchBasket")
+      end
+
+      it "returns data from a redis per-class backend" do
+        Basket.add("RedisBackendSearchBasket", {name: "red", value: 10})
+        result = Basket.peek("RedisBackendSearchBasket")
+        expect(result.length).to eq(1)
+        expect(result.first["name"]).to eq("red")
+      end
+    end
+
+    describe ".search" do
+      it "finds items in the per-class backend" do
+        results = Basket.search("MemoryBackendSearchBasket") { |d| d[:value] > 1 }
+        expect(results.length).to eq(2)
+        expect(results.map(&:data).map { |d| d[:name] }).to contain_exactly("beta", "gamma")
+      end
+
+      it "returns empty array when no items match in per-class backend" do
+        results = Basket.search("MemoryBackendSearchBasket") { |d| d[:value] > 100 }
+        expect(results).to eq([])
+      end
+
+      it "finds items in a redis per-class backend" do
+        Basket.add("RedisBackendSearchBasket", {name: "red", value: 10})
+        Basket.add("RedisBackendSearchBasket", {name: "blue", value: 20})
+        results = Basket.search("RedisBackendSearchBasket") { |d| d["value"] > 15 }
+        expect(results.length).to eq(1)
+        expect(results.first.data["name"]).to eq("blue")
+      end
+
+      it "does not find per-class backend items in the global backend" do
+        Basket.add("DummySearchAndDestroyBasket", {name: "global_item", value: 1})
+        global_results = Basket.search("DummySearchAndDestroyBasket") { |d| d[:name] == "alpha" }
+        expect(global_results).to eq([])
+      end
+    end
+
+    describe ".remove" do
+      it "removes an item from the per-class backend" do
+        results = Basket.search("MemoryBackendSearchBasket") { |d| d[:name] == "beta" }
+        id = results.first.id
+
+        removed = Basket.remove("MemoryBackendSearchBasket", id)
+        expect(removed[:name]).to eq("beta")
+
+        remaining = Basket.peek("MemoryBackendSearchBasket")
+        expect(remaining.length).to eq(2)
+        expect(remaining.map { |d| d[:name] }).to contain_exactly("alpha", "gamma")
+      end
+
+      it "raises ElementNotFoundError for non-existent id in per-class backend" do
+        expect {
+          Basket.remove("MemoryBackendSearchBasket", "non_existent_id")
+        }.to raise_error(Basket::ElementNotFoundError)
+      end
+
+      it "removes an item from a redis per-class backend" do
+        Basket.add("RedisBackendSearchBasket", {name: "red", value: 10})
+        results = Basket.search("RedisBackendSearchBasket") { |d| d["name"] == "red" }
+        id = results.first.id
+
+        removed = Basket.remove("RedisBackendSearchBasket", id)
+        expect(removed["name"]).to eq("red")
+
+        remaining = Basket.peek("RedisBackendSearchBasket")
+        expect(remaining).to be_empty
+      end
+    end
+  end
+
+  describe "per-class backend configuration" do
+    it "accepts a backend option in basket_options" do
+      expect(MemoryBackendBasket.basket_options_hash[:backend]).to eq(:memory)
+      expect(RedisBackendBasket.basket_options_hash[:backend]).to eq(:redis)
+    end
+
+    it "uses the specified backend when a class declares backend: :memory" do
+      Basket.add("MemoryBackendBasket", "item1")
+
+      # Data should be stored in the memory backend, not the global default
+      # Verify it stored correctly by adding a second item and triggering perform
+      Basket.add("MemoryBackendBasket", "item2")
+
+      expect($stdout).to have_received(:puts).with(/memory perform/)
+    end
+
+    it "uses the specified backend when a class declares backend: :redis" do
+      Basket.add("RedisBackendBasket", "item1")
+      Basket.add("RedisBackendBasket", "item2")
+
+      expect($stdout).to have_received(:puts).with(/redis perform/)
+    end
+
+    it "falls back to global Basket.config.backend when no per-class backend is set" do
+      Basket.add("DefaultBackendBasket", "item1")
+      Basket.add("DefaultBackendBasket", "item2")
+
+      expect($stdout).to have_received(:puts).with(/default perform/)
+    end
+
+    it "isolates per-class backend data from the global backend" do
+      Basket.add("MemoryBackendBasket", "memory_item")
+      Basket.add("DefaultBackendBasket", "default_item")
+
+      # The global queue collection should not contain the memory backend basket's data
+      global_data = Basket.queue_collection.data
+      expect(global_data.keys).to include("DefaultBackendBasket")
+      expect(global_data.keys).not_to include("MemoryBackendBasket")
+    end
+
+    it "clears per-class backend data when Basket.clear_all is called" do
+      Basket.add("MemoryBackendBasket", "item1")
+      Basket.add("DefaultBackendBasket", "item1")
+
+      Basket.clear_all
+
+      # After clear_all, both global and per-class backends should be reset
+      expect(Basket.contents).to be_a(Hash)
+      expect(Basket.contents.keys).to eq([])
     end
   end
 end

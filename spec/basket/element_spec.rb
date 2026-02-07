@@ -22,6 +22,42 @@ RSpec.describe Basket::Element do
         expect { Basket::Element.from_queue(element) }.to raise_error(Basket::Element::InvalidElement, "element must be a hash or a Basket::Element")
       end
     end
+
+    context "when the hash is missing the data key" do
+      it "raises InvalidElement" do
+        expect { Basket::Element.from_queue({"id" => "abc"}) }.to raise_error(Basket::Element::InvalidElement, "both data and id must be present")
+      end
+    end
+
+    context "when the hash is missing the id key" do
+      it "raises InvalidElement" do
+        expect { Basket::Element.from_queue({"data" => "foo"}) }.to raise_error(Basket::Element::InvalidElement, "both data and id must be present")
+      end
+    end
+  end
+
+  describe "#==" do
+    it "returns true for equal Elements" do
+      allow(SecureRandom).to receive(:uuid).and_return("same-id")
+      element_a = Basket::Element.new("foo")
+      element_b = Basket::Element.new("foo")
+      expect(element_a == element_b).to be true
+    end
+
+    it "returns false when compared to nil" do
+      element = Basket::Element.new("foo")
+      expect(element == nil).to be false
+    end
+
+    it "returns false when compared to a string" do
+      element = Basket::Element.new("foo")
+      expect(element == "string").to be false
+    end
+
+    it "returns false when compared to an integer" do
+      element = Basket::Element.new("foo")
+      expect(element == 123).to be false
+    end
   end
 
   describe "#to_json" do
